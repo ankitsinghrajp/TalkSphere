@@ -115,6 +115,6 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-[#09090b] text-gray-200;
+    @apply bg-background text-foreground;
   }
 }
