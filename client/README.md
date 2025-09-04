@@ -71,3 +71,71 @@ dynamic routes -> /user/1 , /user/2 (the id changes dynamically)
    </Routes>
 
 
+# What is REACTNODE Why is it used?
+
+--> In TypeScript, ReactNode is a type provided by React.
+--> It describes anything that React can render inside the DOM
+
+--> It is defined like this in React types:
+  
+  type ReactNode = ReactChild | ReactFragment | ReactPortal | boolean | null | undefined
+  
+         ReactChild → string, number, React element (<div>Hi</div>)
+
+         ReactFragment → <>...</>
+
+         ReactPortal → rendering into another DOM tree (like modals)
+
+         boolean, null, undefined → valid "nothing" values in React
+
+
+# Why is ReactNode used?
+
+When you make a reusable component that accepts children, you don’t know whether children will be:
+
+a single element
+
+text
+
+a fragment
+
+null (nothing)
+
+or a mix of these
+
+✅ ReactNode covers all those possibilities.
+
+
+example:
+
+ import React, { type ReactNode } from 'react'
+import { Navigate, Outlet } from 'react-router-dom'
+
+type protectRouteProps = {
+    children?: ReactNode;
+    user: unknown | null;
+    redirect?: string;
+}
+
+const ProtectedRoute: React.FC<protectRouteProps> = ({children, user, redirect='/login'}) => {
+
+    if(!user) return <Navigate to={redirect}/>
+       
+    return children?children: <Outlet/>
+}
+
+export default ProtectedRoute
+
+
+
+# What is Outlet in React Router Dom 
+
+Outlet is a component provided by react-router-dom.
+
+It acts as a placeholder for rendering the child routes of a parent route.
+
+🔹 Why is it used?
+
+When you define nested routes, Outlet tells React Router where to render those nested components inside the parent layout. Without it, nested routes won’t appear.
+
+
