@@ -8,7 +8,9 @@ import { ThemeProvider } from './components/theme-provider.tsx'
 createRoot(document.getElementById('root')!).render(
   <HelmetProvider>
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <div onContextMenu={e=>e.preventDefault()}>
     <App />
+      </div>
     </ThemeProvider>
   </HelmetProvider>
 )

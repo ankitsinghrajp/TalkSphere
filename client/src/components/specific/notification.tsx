@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 
 const Notification = () => {
   return (
     <div className="absolute top-full right-4 w-80 max-w-[90vw] bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 z-50 mt-2 max-h-96 overflow-y-auto">
-          <div className="p-4">
+         <Suspense fallback={<>This is the main container guys!</>}>
+
+           <div className="p-4">
             <div className="dark:text-gray-100 text-gray-700">
               <h3 className="text-lg font-semibold mb-4">Notifications</h3>
               <div className="space-y-2">
@@ -22,6 +24,8 @@ const Notification = () => {
               </div>
             </div>
           </div>
+
+         </Suspense>
         </div>
   )
 }

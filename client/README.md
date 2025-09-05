@@ -139,3 +139,17 @@ It acts as a placeholder for rendering the child routes of a parent route.
 When you define nested routes, Outlet tells React Router where to render those nested components inside the parent layout. Without it, nested routes won’t appear.
 
 
+# memo
+--> React.memo is a higher-order component (HOC) in react
+--> It memoizes (remembers) a functional component's rendered output
+--> This means if the component's props do not change, React will skip re-rendering that component.
+
+# How to disable the right click behavior
+--> 
+  For example you create an react app and dont want to use this right open this inspect from right click
+  Do one thing
+  Go to your main.tsx file
+  Wrap your app with 
+  <div onContextMenu={e=>e.preventDefault()}>
+   <App/> 
+   </div>

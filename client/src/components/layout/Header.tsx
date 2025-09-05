@@ -158,12 +158,12 @@ const Header = () => {
       
       {/* Search Dialog */}
       {isSearch && (
-            <SearchDialogue/>    
+          <SearchDialogue/>    
       )}
       
       {/* New Group Dialog */}
       {isNewGroup && (
-           <NewGroupDialogue/>
+          <NewGroupDialogue/>
       )}
       
       {/* Notification Dialog */}

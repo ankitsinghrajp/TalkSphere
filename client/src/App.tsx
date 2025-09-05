@@ -1,6 +1,7 @@
-import React,{lazy} from "react";
+import React,{lazy, Suspense} from "react";
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import ProtectedRoute from "./components/auth/protectRoute";
+import { LayoutLoader } from "./components/layout/Loaders";
 
 // These are the dynamic imports...
 
@@ -16,7 +17,9 @@ const user = true;
 const App = () => {
   return <Router>
 
-    <Routes>
+       <Suspense fallback={<LayoutLoader/>}>
+
+         <Routes>
        {/* This all are the protected routes */}
       <Route element={<ProtectedRoute user={user}/>}>
           <Route path="/" element={<Index/>}/>
@@ -37,6 +40,8 @@ const App = () => {
         <Route path="*" element={<NotFound/>}/>
 
     </Routes>
+
+       </Suspense>
 
   </Router>
 }

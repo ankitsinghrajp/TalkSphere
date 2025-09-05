@@ -199,3 +199,8 @@
         .animate-fadeIn {
           animation: fadeIn 0.8s ease-out;
         }
+
+.linkStyle{
+  text-decoration: none;
+  color:black;
+}
