@@ -3,11 +3,9 @@ import { ModeToggle } from "../toggle-theme";
 import { Bell, Group, LogOut, Menu, PlusIcon, SearchIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useNavigate } from "react-router-dom";
-
-const SearchDialogue = lazy(()=>import("../specific/search"));
-const NewGroupDialogue = lazy(()=>import("../specific/newGroup"));
-const NotificationDialogue = lazy(()=> import("../specific/notification"));
-
+import Search from "../specific/search";
+import NewGroup from "../specific/newGroup";
+import Notification from "../specific/notification";
 const Header = () => {
   const navigate = useNavigate();
   const [isMobile,setIsMobile] = useState(false);
@@ -56,7 +54,7 @@ const Header = () => {
 
   return (
     <div className="relative">
-      <div className="h-[4rem] w-full flex items-center dark:bg-gray-950/95 bg-gray-200 border-b-2 border-black/50 dark:border-white/50">
+      <div className="h-[4rem] w-full flex items-center bg-white dark:bg-gray-900 border-b-2 border-black/50 dark:border-white/50">
         <div className="w-full">
         <div className="w-[90%] mx-auto flex justify-between items-center">
           {/* Left Side */}
@@ -158,17 +156,17 @@ const Header = () => {
       
       {/* Search Dialog */}
       {isSearch && (
-          <SearchDialogue/>    
+          <Search/>    
       )}
       
       {/* New Group Dialog */}
       {isNewGroup && (
-          <NewGroupDialogue/>
+          <NewGroup/>
       )}
       
       {/* Notification Dialog */}
       {isNotification && (
-          <NotificationDialogue/>
+          <Notification/>
       )}
     </div>
   );

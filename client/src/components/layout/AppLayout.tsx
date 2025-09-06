@@ -3,6 +3,7 @@ import Header from "./Header";
 import Title from "../shared/Title";
 import { SampleChats } from "../constants/sampleData";
 import { useParams } from "react-router-dom";
+import Profile from "../specific/profile";
 const ChatList = lazy(()=>import("../specific/ChatList"));
 
 type AppLayoutProps = {
@@ -28,10 +29,10 @@ const AppLayout =
       return(<div className="dark:bg-gray-950/95 bg-gray-200">
       <Title/>
       <Header/>
-      <div className="container h-[calc(100vh-4rem)] mx-auto">
+      <div className=" w-full h-[calc(100vh-4rem)] ">
         
-        <div className="grid grid-cols1 md:grid-cols-3">
-              <div className=" md:block hidden">
+        <div className="grid grid-cols1 md:grid-cols-4">
+              <div className=" md:block hidden col-span-1">
                 <ChatList 
                 chats={SampleChats} 
                 chatId={chatId}
@@ -39,12 +40,13 @@ const AppLayout =
                
                 />
               </div>
-              <div>
+              <div className="col-span-2">
                     <WrappedComponent {...props} {...(layoutProps as P)} />
               </div>
 
-              <div className="hidden md:block">
-                Third
+              <div className="hidden md:block col-span-1">
+                
+                <Profile/>
               </div>
         </div>
       
