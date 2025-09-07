@@ -22,15 +22,15 @@ const Notification = () => {
         <div className="p-1">
           <div className="dark:text-gray-100 text-gray-700">
             {SampleNotifications.length > 0 ?   
-              <div className="space-y-2 h-[400px] pt-5 overflow-scroll">
-                {SampleNotifications.map((notification)=>{
-                  return <NotificationItem 
+              <div className="space-y-2 h-[400px] pt-5 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent hover:scrollbar-thumb-gray-500">
+                {SampleNotifications.map((notification)=>(
+                  <NotificationItem 
                     sender={notification.sender}
                     _id={notification._id}
                     handler={friendRequestHandler} 
                     key={notification._id}
                   /> 
-                })}
+                ))}
               </div> : 
               <div className="text-sm dark:text-gray-500 text-gray-600 text-center py-8">
                 No new Notification
@@ -125,4 +125,4 @@ const NotificationItem = memo(({sender, _id, handler}) => {
   );
 });
 
-export default Notification
+export default Notification;

@@ -47,3 +47,34 @@ export const SampleNotifications = [
     }
   }
 ]
+
+
+export const sampleMessage = [
+  {
+    attachments: [],
+    content: "This is the message sent by Chaman",
+    _id: "sfnsdjkfsdnfkjsbnd",
+    sender: {
+      _id: "user._id",
+      name: "Chaman ",
+    },
+    chat: "chatId",
+    createdAt: "2025-07-12T10:41:30.630Z",
+  },
+  {
+    attachments: [
+      {
+        public_id: "asdsad2",
+        url: "https://www.w3schools.com/howto/img_avatar.png",
+      },
+    ],
+    content: "",
+    _id: "sfnsdjkfsdnfkjsbnd2",
+    sender: {
+      _id: "dkddkddkddfhggj",
+      name: "Gaman ",
+    },
+    chat: "chatId",
+    createdAt: "2025-06-12T10:41:30.630Z",
+  }
+]

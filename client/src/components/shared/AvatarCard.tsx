@@ -1,5 +1,6 @@
 import React from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import { transformImage } from '../../lib/feature';
 
 const AvatarCard = ({ avatar = [], max = 4 }) => {
   const displayedAvatars = avatar.slice(0, max);
@@ -11,7 +12,7 @@ const AvatarCard = ({ avatar = [], max = 4 }) => {
           key={index}
           className="w-10 h-10 border-2 border-white rounded-full"
         >
-          <AvatarImage src={i} className="rounded-full" />
+          <AvatarImage src={transformImage(i)} className="rounded-full" />
           <AvatarFallback>$$</AvatarFallback>
         </Avatar>
       ))}
