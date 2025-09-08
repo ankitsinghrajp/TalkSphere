@@ -48,7 +48,7 @@ const Chat = () => {
     <div className='w-full h-[calc(100vh-4rem)]'>
       <div 
         ref={containerRef} 
-        className='h-[90%] p-2 overflow-y-auto bg-gray-50 dark:bg-gray-950'
+        className='h-[90%] p-2 overflow-y-auto bg-gray-50 dark:bg-gradient-to-br dark:from-gray-950 via-gray-950/95 dark:to-gray-950/90'
       >
         {/* Message would go here */}
         {

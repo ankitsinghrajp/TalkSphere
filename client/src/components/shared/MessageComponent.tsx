@@ -23,7 +23,7 @@ const MessageComponent = ({message, user, theme = 'dark'}) => {
                 
                 <div className={`px-4 py-3 rounded-2xl shadow-sm ${
                     sameSender 
-                        ? "bg-gradient-to-r dark:from-blue-600 dark:to-blue-700 dark:text-white dark:shadow-blue-900/20 from-blue-500 to-blue-600 text-white shadow-blue-200/40" 
+                        ? "dark:bg-gray-800 border dark:border-gray-700/50 shadow-gray-900/20 dark:text-gray-100 text-gray-800 bg-slate-400" 
                             
                         : isDark
                             ? "dark:bg-gray-800 bg-slate-400 dark:text-gray-100 text-gray-950 border dark:border-gray-700/50 shadow-gray-900/20" 

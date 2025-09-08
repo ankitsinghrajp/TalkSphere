@@ -1,6 +1,6 @@
 import React, { lazy, useState } from "react";
 import { ModeToggle } from "../toggle-theme";
-import { Bell, Group, LogOut, Menu, PlusIcon, SearchIcon } from "lucide-react";
+import { Bell, Group, LogOut, Menu, PlusIcon, SearchIcon, Users } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useNavigate } from "react-router-dom";
 import Search from "../specific/search";
@@ -101,7 +101,7 @@ const Header = () => {
             {/* Manage Groups */}
             <Tooltip>
               <TooltipTrigger>
-                 <Group
+                 <Users
                  onClick={navigateToGroups}
                   className="w-5 h-5 hover:text-gray-900 hover:cursor-pointer text-gray-700 hover:dark:text-gray-400 dark:text-gray-200"/>
               </TooltipTrigger>
@@ -132,7 +132,7 @@ const Header = () => {
                   className="w-5 h-5 hover:text-gray-900 hover:cursor-pointer text-gray-700 hover:dark:text-gray-400 dark:text-gray-200"/>
               </TooltipTrigger>
               <TooltipContent>
-                      Logout
+                      Log Out
               </TooltipContent>
             </Tooltip>
             
