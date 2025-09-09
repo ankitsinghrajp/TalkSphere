@@ -59,7 +59,7 @@ const Chat = () => {
    
       </div>
 
-      {/* Modern Chat Prompt Container */}
+      {/* Chat Prompt Container */}
       <div className='relative h-[10%] bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 flex items-center'>
         <form className='w-full' onSubmit={handleSubmit(onSubmit)}>
           <div className='relative flex items-center max-w-4xl mx-auto'>

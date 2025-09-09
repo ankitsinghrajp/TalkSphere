@@ -14,7 +14,7 @@ const ChatList = ({w="100%",
     handleDeleteChat,
 }) => {
   return (
-    <div className={`w-[${w}] bg-white dark:bg-gray-900 border-r-2 border-black/50 dark:border-white/50 h-[calc(100vh-4rem)] flex flex-col`}>
+    <div className={`w-[${w}] overflow-y-auto bg-white py-5 dark:bg-gray-900 border-r-2 border-black/50 dark:border-white/50 h-[calc(100vh-4rem)] flex flex-col`}>
         {
             chats?.map((data,index)=>{
 

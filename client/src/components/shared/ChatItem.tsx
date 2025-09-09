@@ -1,47 +1,71 @@
 import React, { memo } from 'react'
 import { Link } from 'react-router-dom'
 import AvatarCard from './AvatarCard'
+import { ArrowRight } from 'lucide-react'
 
 const ChatItem = ({
-    avatar= {},
+    avatar = {},
     name,
     _id,
     groupChat = false,
     sameSender,
     isOnline,
     newMessageAlert,
-    index=0,
+    index = 0,
     handleDeleteChat
 }) => {
-  return (
-    <Link className='hover:text-decoration:none' to={`/chat/${_id}`} style={{
-        textDecoration:"none",
-        color:'black',
-        padding:'0',
-    }}
-    onContextMenu={(e)=>handleDeleteChat(e,_id,groupChat)}
-    >
-            <div className={`flex items-center relative border-b-2 border-amber-300 p-[1rem] ${sameSender?"dark:bg-purple-500 bg-blue-500":"bg-gray-400"}`}>
-                <AvatarCard avatar={avatar}/>
-                <div>
-                    <h3>{name}</h3>
-                    {newMessageAlert &&(
-                        <h4>
-                            {newMessageAlert.count} new Message
-                        </h4>
-                    ) }
+    return (
+        <Link 
+            className='hover:text-decoration:none' 
+            to={`/chat/${_id}`} 
+            style={{
+                textDecoration: "none",
+                color: 'black',
+                padding: '0',
+            }}
+            onContextMenu={(e) => handleDeleteChat(e, _id, groupChat)}
+        >
+            <div className={`
+                flex items-center justify-between relative 
+                bg-white dark:bg-gray-800
+                hover:bg-gray-50 dark:hover:bg-gray-800/50
+                transition-all duration-200 ease-in-out
+                border-l-4 ${sameSender ? "border-l-gray-800 dark:border-l-gray-200" : "border-l-transparent"}
+                p-4 mx-2 my-1 rounded-lg
+                shadow-sm hover:shadow-md
+                group
+            `}>
+                <div className="flex items-center space-x-3 flex-1">
+                    <div className="relative">
+                        <AvatarCard avatar={avatar} />
+                        {isOnline && (
+                            <div className="absolute -bottom-1 -right-1 h-4 w-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-900 shadow-sm" />
+                        )}
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                        <h3 className="text-gray-900 dark:text-white font-medium text-sm truncate">
+                            {name}
+                        </h3>
+                        {newMessageAlert && (
+                            <div className="flex items-center mt-1">
+                                <div className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                                    {newMessageAlert.count}
+                                </div>
+                                <span className="text-gray-500 dark:text-gray-400 text-xs ml-2">
+                                    new message{newMessageAlert.count > 1 ? 's' : ''}
+                                </span>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
-                {
-                    isOnline && (
-                        <p className='h-3 w-3 rounded-full bg-green-500'/>
-                    )
-                }
-
-
+                <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <ArrowRight className='h-4 w-4 text-gray-800 dark:text-gray-300'/>
+                </div>
             </div>
-    </Link>
-  )
+        </Link>
+    )
 }
 
 export default memo(ChatItem)

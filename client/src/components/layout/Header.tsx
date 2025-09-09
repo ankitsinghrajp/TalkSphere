@@ -52,15 +52,33 @@ const Header = () => {
     console.log("Logged Out Successfully!");
   }
 
+
+const TalkSphereLogo = () => {
+  return (
+    <div className="md:block hidden">
+      <div className="text-2xl font-bold">
+        <span className="bg-gradient-to-r from-blue-500 to-cyan-500 bg-clip-text text-transparent">
+          Talk
+        </span>
+        <span className="bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
+          Sphere
+        </span>
+      </div>
+      <div className="text-[11px] text-gray-400 ml-2 dark:text-gray-300 font-normal -mt-[1px]">
+        &lt;by Ankit Singh Rajput&gt;
+      </div>
+    </div>
+  );
+};
+
+
   return (
     <div className="relative">
       <div className="h-[4rem] w-full flex items-center bg-white dark:bg-gray-900 border-b-2 border-black/50 dark:border-white/50">
         <div className="w-full">
         <div className="w-[90%] mx-auto flex justify-between items-center">
           {/* Left Side */}
-          <div className="text-2xl md:block hidden font-bold dark:text-gray-100 text-gray-700">
-            TalkSphere
-          </div>
+          <TalkSphereLogo/>
           <div className="md:hidden">
             <Menu
               onClick={handleMobile}
