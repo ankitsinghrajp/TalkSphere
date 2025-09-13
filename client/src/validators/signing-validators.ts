@@ -59,3 +59,8 @@ export const SignUpSchema = z.object({
     ),
  
 });
+
+
+export const AdminSignIn = z.object({
+  secretKey: z.string().nonempty(),
+})
