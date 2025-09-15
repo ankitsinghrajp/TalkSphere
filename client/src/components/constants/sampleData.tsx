@@ -78,3 +78,25 @@ export const sampleMessage = [
     createdAt: "2025-06-12T10:41:30.630Z",
   }
 ]
+
+
+export const dashboardData = {
+    users:[
+        {
+    _id: 1,
+    name: "Ankit Singh Rajput",
+    avatar: "https://images.unsplash.com/photo-1755371034010-51c25321312d?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxfHx8ZW58MHx8fHx8",
+    username:"ankit.singh.rajput404",
+    friends: 20,
+    groups: 5
+  },
+  {
+    _id:2,
+    name:"Tanu Sharma",
+    avatar: "https://images.unsplash.com/photo-1755380749576-c2372cc487a7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwzfHx8ZW58MHx8fHx8",
+    username:"tanu.singh.rajput404",
+    friends: 3,
+    groups:1
+  }
+    ]
+}
