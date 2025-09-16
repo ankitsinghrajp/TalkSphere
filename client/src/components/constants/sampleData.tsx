@@ -52,7 +52,7 @@ export const SampleNotifications = [
 export const sampleMessage = [
   {
     attachments: [],
-    content: "This is the message sent by Chaman",
+    content: "This is the message sent by first user",
     _id: "sfnsdjkfsdnfkjsbnd",
     sender: {
       _id: "user._id",
@@ -98,5 +98,54 @@ export const dashboardData = {
     friends: 3,
     groups:1
   }
-    ]
+    ],
+    chats:[
+      {
+        name:"Ankit Singh Chouhan",
+        _id: 1,
+        groupChat: false,
+        member:["1","2"],
+        totalMembers: 2,
+        totalMessages:20,
+        creator:{
+          name:"Ankit Singh Chouhan",
+        }
+      },
+      {
+        name:"Balmukund Gupt",
+        _id: 2,
+        groupChat: false,
+        member:["1","2"],
+        totalMembers: 2,
+        totalMessages:20,
+        creator:{
+          name:"Subramanyam",
+        }
+      },
+    ],
+    messages:[
+      {
+        attachments:[],
+        content:"New Message from Milton",
+        _id:"sfkfk",
+        sender:{
+          _id:"user._id",
+          name:"Chaman",
+        },
+        chat:"chatId",
+        createdAt:"2024-02-12T10:41:30.630Z",
+      },
+      {
+        attachments:[],
+        content:"New Asus",
+        _id:"sfkkkkfk",
+        sender:{
+          _id:"user._id",
+          name:"Raman",
+        },
+        chat:"chatId",
+        createdAt:"2025-02-12T10:41:30.630Z",
+      },
+    ],
 }
+

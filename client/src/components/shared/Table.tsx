@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const TableComponent = ({ heading, columns, rows }) => {
+const TableComponent = ({ heading, columns, rows, width = 200 }) => {
   const [isDarkTheme, setIsDarkTheme] = useState(true);
 
   const themeClasses = {
@@ -19,33 +19,32 @@ const TableComponent = ({ heading, columns, rows }) => {
 
   return (
     <div className={`h-full px-2 py-6 md:p-6 ${themeClasses.container}`}>
-      <div className={`rounded-lg shadow-lg border ${themeClasses.card} h-full flex flex-col`}>
-        {/* Header Section */}
-        <div className="p-6 border-b border-opacity-20">
-       
-        </div>
-
+      <div className={`rounded-xl shadow-xl border ${themeClasses.card} h-full flex flex-col overflow-hidden`}>
+    
         {/* Table Section */}
         <div className="flex-1 overflow-auto">
           <table className="w-full">
-            <thead className={`${themeClasses.tableHeader} sticky top-0`}>
+            <thead className={`${themeClasses.tableHeader} sticky top-0 z-10`}>
               <tr>
                 {columns.map((column) => (
                   <th
                     key={column.field}
-                    className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider"
+                    className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider border-b border-opacity-20"
                   >
                     {column.headerName}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-600 divide-opacity-30">
+            <tbody className="divide-y divide-opacity-20">
               {rows.length > 0 ? (
                 rows.map((row, index) => (
-                  <tr key={row._id || row.id || index} className={`transition-colors ${themeClasses.tableRow}`}>
+                  <tr 
+                    key={row._id || row.id || index} 
+                    className={`transition-colors duration-150 ${themeClasses.tableRow}`}
+                  >
                     {columns.map((column) => (
-                      <td key={column.field} className="px-6 py-4">
+                      <td key={column.field} className="px-6 py-4 text-sm">
                         {renderCellContent(column, row)}
                       </td>
                     ))}
@@ -57,8 +56,8 @@ const TableComponent = ({ heading, columns, rows }) => {
                     colSpan={columns.length}
                     className="px-6 py-16 text-center text-gray-400"
                   >
-                    <div className="flex flex-col items-center space-y-2">
-                      <div className="text-4xl mb-4">📄</div>
+                    <div className="flex flex-col items-center space-y-3">
+                      <div className="text-4xl mb-2">📄</div>
                       <p className="text-lg font-medium">No data available</p>
                       <p className="text-sm opacity-75">There are no users to display at the moment.</p>
                     </div>
