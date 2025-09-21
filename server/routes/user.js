@@ -1,11 +1,18 @@
 import express from "express";
-import {loginController, newUser} from "../controllers/user.js";
+import {getMyProfile, loginController, Logout, newUser} from "../controllers/user.js";
 import {singleAvatar} from "../middlewares/multer.js";
+import {isAuthenticated} from "../middlewares/auth.js";
 const router = express.Router();
 
+
+// Public routes
 router.post("/new",singleAvatar,newUser)
 router.post("/login",loginController);
 
+//Private Routes
+router.get("/me",isAuthenticated ,getMyProfile);
+
+router.get("/logout",Logout);
 
 
 export default router;
