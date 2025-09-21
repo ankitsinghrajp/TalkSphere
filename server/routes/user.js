@@ -1,10 +1,11 @@
 import express from "express";
-import {userController, adminController} from "../controllers/user.js";
-
+import {loginController, newUser} from "../controllers/user.js";
+import {singleAvatar} from "../middlewares/multer.js";
 const router = express.Router();
 
-router.get("/",userController);
-router.get("/admin",adminController);
+router.post("/new",singleAvatar,newUser)
+router.post("/login",loginController);
+
 
 
 export default router;
