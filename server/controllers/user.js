@@ -1,5 +1,5 @@
 import {User} from "../models/user.js"
-import { sendToken } from "../utils/features.js";
+import { cookieOptions, sendToken } from "../utils/features.js";
 import bcrypt from "bcrypt";
 //Create a new user, save it to the database and save cookie
 
@@ -71,9 +71,22 @@ export const getMyProfile = async (req, res, next)=>{
 }
 
 export const Logout = async(req, res, next)=>{
-     req.cookies.clear;
-    return res.status(200).json({
+    return res.status(200).cookie("talksphere-token","",{...cookieOptions, maxAge:0}).json({
       status:"success",
       message:"The user logout successfull!",
     })
+}
+
+export const SearchUser = async(req,res,next)=>{
+  try {
+  const {name} = req.query;
+  
+  return res.status(200).json({
+    success:true,
+    message:name,
+  })
+  } catch (error) {
+    return next(error);
+  }
+
 }

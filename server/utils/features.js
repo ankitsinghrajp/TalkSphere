@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-const cookieOptions = {
+export const cookieOptions = {
     maxAge: 24*60*60*1000, // 24 hours,
     sameSite:"none",
     httpOnly:true,
@@ -37,4 +37,13 @@ export const sendToken = (res, user, code, message)=>{
         message,
     })
 
+}
+
+export const deleteFilesFromCloudinary = async (public_ids)=>{
+
+}
+
+
+export const emitEvent = (req, event, user, data)=>{
+     console.log("Emitting Event!",event);
 }
