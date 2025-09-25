@@ -3,7 +3,7 @@ import mongoose, { Types } from "mongoose";
 const schema = new mongoose.Schema({
      status: {
         type:String, 
-        required:"pending",
+        default:"pending",
         enum:["pending","accept","rejected"],
 
     },

@@ -49,3 +49,13 @@ export const chatIdValidator = ()=>[
     param("id").notEmpty().withMessage("Chat Id is required!"),
     // query("page").notEmpty()
 ]
+
+export const sendRequestValidator = ()=>[
+    body("userId", "UserId is missing!").notEmpty()
+]
+
+export const acceptRequestValidator = ()=>[
+    body("requestId","Request Id is missing!").notEmpty(),
+    body("accept").notEmpty().withMessage("Accept is missing").isBoolean().withMessage("Accept must be a boolean!")
+]
+

@@ -1,5 +1,8 @@
+import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
+import { Chat } from "../models/chat.js";
+import { Request } from "../models/request.js";
 import {User} from "../models/user.js"
-import { cookieOptions, sendToken } from "../utils/features.js";
+import { cookieOptions, emitEvent, sendToken } from "../utils/features.js";
 import bcrypt from "bcrypt";
 //Create a new user, save it to the database and save cookie
 
@@ -79,14 +82,134 @@ export const Logout = async(req, res, next)=>{
 
 export const SearchUser = async(req,res,next)=>{
   try {
-  const {name} = req.query;
+  const {name=""} = req.query;
+
+  // The problem is that we need to find the user which are not the friend of the current user who is requesting 
   
+  const myChats = await Chat.find({
+     groupChat:false,
+     members: req.user._id
+  });
+
+  
+ const allUsersFromMyChats = myChats.map((chat)=>chat.members).flat();
+
+ const allUsersExceptMeAndFriends = await User.find({
+  _id:{$nin: allUsersFromMyChats.concat(req.user._id)},
+  name: {$regex:name,$options:"i"}
+ });
+ 
+
+ const users = allUsersExceptMeAndFriends.map(({_id, name, avatar})=>({_id, name,avatar:avatar.url}));
   return res.status(200).json({
     success:true,
-    message:name,
+    users
   })
   } catch (error) {
     return next(error);
   }
 
+}
+
+export const sendFriendRequest = async (req, res, next)=>{
+  try {
+
+    const {userId} = req.body;
+
+    const request = await Request.findOne({
+      $or: [
+        {sender:userId, receiver:req.user._id},
+        {sender:req.user._id, receiver:userId}
+      ]
+       
+    })
+
+    if(request) return next(new Error("Request already sent!"));
+
+    await Request.create({
+         sender: req.user._id,
+         receiver: userId
+    });
+
+    emitEvent(req,NEW_REQUEST,[userId],)
+
+
+    return res.status(200).json({
+          success:true,
+          message:"Friend Request Sent Successfully!"
+    })
+    
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export const acceptFriendRequest = async (req, res, next)=>{
+      try {
+
+        const {requestId, accept} = req.body;
+
+        const request = await Request.findById(requestId).populate("sender","name").populate("receiver","name");
+        if(!request) return next(new Error("Request is not found in the database!"));
+
+
+        if(request.receiver._id.toString() != req.user._id.toString()) return next(new Error("You are unauthorized to accept this request!"));
+
+        if(!accept){
+          await request.deleteOne();
+          return res.status(200).json({
+            success:true,
+            message:"Friend Request Rejected!"
+          });
+        }
+
+        const members =  [request.sender._id, request.receiver._id];
+
+        await Promise.all([Chat.create({
+          members,
+          name: `${request.sender.name}-${request.receiver.name}`,
+
+        }),
+          request.deleteOne()
+      ])
+
+       
+      emitEvent(req, REFETCH_CHATS, members)
+
+
+      return res.status(200).json({
+        success:true,
+        message:"Friend Request Accepted!",
+        senderId: request.sender._id
+      })
+
+        
+      } catch (error) {
+        return next(error);
+      }
+}
+
+export const getAllNotifications = async (req, res, next)=>{
+    
+    try {
+
+      const requests = await Request.find({receiver:req.user._id}).populate("sender", "name avatar");
+
+      const allRequest = requests.map(({_id, sender})=>({
+        _id,
+        sender:{
+          _id: sender._id,
+          name: sender.name,
+          avatar: sender.avatar.url,
+        }
+      }));
+
+      return res.status(200).json({
+        success:true,
+        requests: allRequest
+      })
+      
+    } catch (error) {
+      return next(error);
+    }
 }
