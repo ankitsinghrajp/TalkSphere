@@ -59,3 +59,6 @@ export const acceptRequestValidator = ()=>[
     body("accept").notEmpty().withMessage("Accept is missing").isBoolean().withMessage("Accept must be a boolean!")
 ]
 
+export const adminLoginValidator = ()=>[
+    body("secretKey","The secret key is missing!").notEmpty(),
+]

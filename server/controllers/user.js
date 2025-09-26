@@ -4,6 +4,7 @@ import { Request } from "../models/request.js";
 import {User} from "../models/user.js"
 import { cookieOptions, emitEvent, sendToken } from "../utils/features.js";
 import bcrypt from "bcrypt";
+import { getOtherMember } from "../lib/helper.js";
 //Create a new user, save it to the database and save cookie
 
 export const newUser = async (req, res, next)=>{
@@ -209,6 +210,52 @@ export const getAllNotifications = async (req, res, next)=>{
         requests: allRequest
       })
       
+    } catch (error) {
+      return next(error);
+    }
+}
+
+export const getMyFriends = async (req, res, next)=>{
+    try {
+
+      const chatId = req.query.chatId;
+
+      const chats = await Chat.find({members:req.user._id, groupChat:false})
+      .populate("members", "name avatar");
+
+      const friends = chats.map(({members})=>{
+        const otherUser = getOtherMember(members,req.user._id);
+
+        return {
+          _id:otherUser._id,
+          name: otherUser.name,
+          avatar: otherUser.avatar.url,
+        }
+      });
+
+
+      if(chatId){
+
+        // This is for adding members in a group 
+        const chat = await Chat.findById(chatId);
+
+        const availableFriends = friends.filter(
+          (friend)=> !chat.members.includes(friend._id)
+        );
+
+       return res.status(200).json({
+           success:true,
+           friends:availableFriends
+       })
+
+      }else{
+        return res.status(200).json({
+          success:true,
+          friends
+        })
+      }
+      
+
     } catch (error) {
       return next(error);
     }
