@@ -253,7 +253,9 @@ export const sendAttachments = async (req, res, next)=>{
         
         const files = req.files || [];
 
-        if(files.length < 1) return next(new Error("No files attached!"));
+        if(files.length < 1) return next(new Error("Please attach atleast one file!"));
+        if(files.length > 5) return next(new Error("Only 5 files can be attached at once!"));
+
 
         // Upload files here
 

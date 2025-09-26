@@ -1,4 +1,4 @@
-import {body, validationResult, check, param, query} from "express-validator";
+import {body, validationResult, param, query} from "express-validator";
 
 export const validateHandler = (req, res, next)=>{
     const errors = validationResult(req);
@@ -16,8 +16,6 @@ export const registerValidator = ()=> [
     body("username","Username is required!").notEmpty(),
     body("bio","Bio is required!").notEmpty().notEmpty(),
     body("password","Password is required!").notEmpty(),
-    // check("avatar").notEmpty().withMessage("Avatar is required!") // use .withMessage or direct like upper both are same thing
-
 ]
 
 export const loginValidator = () =>[
@@ -42,7 +40,6 @@ export const removeMemberValidator = ()=>[
 
 export const sendAttachementsValidator = ()=>[
     body("chatId","Chat Id is missing!").notEmpty(),
-    check("files").notEmpty().withMessage("File is missing").isArray({min:1,max:5}).withMessage("The files should be 1 - 5 only")
 ]
 
 export const chatIdValidator = ()=>[
