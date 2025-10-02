@@ -1,3 +1,10 @@
+import { userSocketIDs } from "../app.js";
+
 export const getOtherMember = (members, userId)=>{
    return members.find((member)=>member._id.toString() !== userId.toString());
+}
+
+// We are finding the socket ids from giving user ids
+export const getSockets = (users=[])=>{
+  return users.map((user)=> userSocketIDs.get(user._id.toString()));
 }
