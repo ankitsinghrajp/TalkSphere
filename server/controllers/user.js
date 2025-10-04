@@ -2,7 +2,7 @@ import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
 import { Chat } from "../models/chat.js";
 import { Request } from "../models/request.js";
 import {User} from "../models/user.js"
-import { cookieOptions, emitEvent, sendToken } from "../utils/features.js";
+import { cookieOptions, emitEvent, sendToken, uploadFilesToCloudinary } from "../utils/features.js";
 import bcrypt from "bcrypt";
 import { getOtherMember } from "../lib/helper.js";
 //Create a new user, save it to the database and save cookie
@@ -14,13 +14,18 @@ export const newUser = async (req, res, next)=>{
      const {name, username, password, bio} = req.body;
 
      if(!name || !username || !password) return next(new Error("name username and password is required!"));
+     
+     const file = req.file;
 
+     if(!file) return next(new Error("Please Upload Avatar"));
+
+     const result = await uploadFilesToCloudinary([file]);
 
      const avatar = {
-      public_id: "ckdghdkfghskghd",
-      url:"https://user48583985.cloudinary.profile.com"
+      public_id: result[0].public_id,
+      url:result[0].url,
      }
-     
+
      const user = await User.create({
       name,
       username,

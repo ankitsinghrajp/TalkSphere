@@ -31,7 +31,7 @@ const schema = new mongoose.Schema({
 
 
 schema.pre("save",async function(next){
-    if(!this.isModified("password")) next();  // We need to do this when only the user is created or password modify if not then no need of it.
+    if(!this.isModified("password")) return next();  // We need to do this when only the user is created or password modify if not then no need of it.
 
     this.password = await bcrypt.hash(this.password,10);
 })

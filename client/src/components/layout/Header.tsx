@@ -6,12 +6,18 @@ import { useNavigate } from "react-router-dom";
 import Search from "../specific/search";
 import NewGroup from "../specific/newGroup";
 import Notification from "../specific/notification";
+import axios from "axios";
+import { server } from "../constants/config";
+import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { userNotExists } from "../../redux/reducers/auth";
 const Header = () => {
   const navigate = useNavigate();
   const [isMobile,setIsMobile] = useState(false);
   const [isSearch,setIsSearch] = useState(false);
   const [isNewGroup, setIsNewGroup] = useState(false);
   const [isNotification, setIsNotification] = useState(false);
+  const dispatch = useDispatch();
 
   const handleMobile = () => {
     setIsMobile((prev) =>!prev);
@@ -48,8 +54,19 @@ const Header = () => {
     navigate("/groups");
   }
 
-  const logoutHandler = ()=>{
-    console.log("Logged Out Successfully!");
+  const logoutHandler = async ()=>{
+      try {
+      
+      const {data} = await axios.get(`${server}/api/v1/user/logout`,{
+        withCredentials:true,
+      })
+
+        toast.success(data.message);
+        dispatch(userNotExists());
+        
+        } catch (error) {
+          toast.error(error?.response?.data?.message || "Something went wrong!");
+      }
   }
 
 

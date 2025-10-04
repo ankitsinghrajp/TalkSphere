@@ -9,12 +9,20 @@ import { ModeToggle } from "../components/toggle-theme";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import { Eye, EyeOff, User, Mail, Lock, Camera, X } from "lucide-react";
+import axios from "axios";
+import {server} from "../components/constants/config";
+import { useDispatch } from "react-redux";
+import { userExists } from "../redux/reducers/auth";
+import { toast } from "sonner";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [profileImage, setProfileImage] = useState(null);
   const [profileImagePreview, setProfileImagePreview] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+
+
+  const dispatch = useDispatch();
 
   type formFields = {
     avatar?: File;
@@ -40,11 +48,70 @@ const Login = () => {
     resolver: zodResolver(isLogin ? SignInSchema : SignUpSchema),
   });
 
-  const onSubmit: SubmitHandler<formFields> = (data) => {
-    if (profileImage) {
-      console.log("Profile Image:", profileImage);
+  const onSubmit: SubmitHandler<formFields> = async (dataFromUser) => {
+
+      if(!dataFromUser.bio && !dataFromUser.name){
+
+           const config = {
+           withCredentials:true,
+           headers:{
+          "Content-Type":"application/json"
+          }
+         };
+
+        // Login Handler
+        try {
+        const {data} = await axios.post(`${server}/api/v1/user/login`,{
+        username:dataFromUser.username,
+        password:dataFromUser.password
+      },config)
+
+      dispatch(userExists(true));
+
+      toast.success(data.message);
+
+       } 
+       catch (error) {
+          toast.error(error?.response?.data?.message || "Something went wrong");
+        }
+
+      }
+      else{
+        // Sign Up Handler
+
+        const config = {
+            withCredentials:true,
+            headers:{
+              "Content-Type":"multipart/form-data"
+            }
+          }
+
+        const formData = new FormData();
+        formData.append("avatar",profileImage);
+        formData.append("name",dataFromUser.name);
+        formData.append("bio",dataFromUser.bio);
+        formData.append("username",dataFromUser.username);
+        formData.append("password",dataFromUser.password);
+        try {
+          
+         const {data} = await axios.post(
+          `${server}/api/v1/user/new`,
+          formData,
+          config
+         );
+
+
+         dispatch(userExists(true));
+         toast.success(data.message);
+        } catch (error) {
+          toast.error(error?.response?.data?.message || "Something Went Wrong");
+        }
+
+
+
+      
     }
-    console.log("Form Data:", data);
+
     reset();
     setProfileImagePreview(null);
   };
