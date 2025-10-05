@@ -1,7 +1,7 @@
-import React, { memo } from 'react'
-import { Link } from 'react-router-dom'
-import AvatarCard from './AvatarCard'
-import { ArrowRight } from 'lucide-react'
+import React, { memo, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import AvatarCard from './AvatarCard';
+import { ArrowRight } from 'lucide-react';
 
 const ChatItem = ({
     avatar = {},
@@ -14,6 +14,11 @@ const ChatItem = ({
     index = 0,
     handleDeleteChat
 }) => {
+    // Memoize the context menu handler
+    const onContextMenu = useCallback((e) => {
+        handleDeleteChat(e, _id, groupChat);
+    }, [handleDeleteChat, _id, groupChat]);
+
     return (
         <Link 
             className='hover:text-decoration:none' 
@@ -23,7 +28,7 @@ const ChatItem = ({
                 color: 'black',
                 padding: '0',
             }}
-            onContextMenu={(e) => handleDeleteChat(e, _id, groupChat)}
+            onContextMenu={onContextMenu}
         >
             <div className={`
                 flex items-center justify-between relative 
@@ -65,7 +70,17 @@ const ChatItem = ({
                 </div>
             </div>
         </Link>
-    )
-}
+    );
+};
 
-export default memo(ChatItem)
+// Memoize with custom comparison
+export default memo(ChatItem, (prevProps, nextProps) => {
+    return (
+        prevProps._id === nextProps._id &&
+        prevProps.sameSender === nextProps.sameSender &&
+        prevProps.isOnline === nextProps.isOnline &&
+        prevProps.name === nextProps.name &&
+        prevProps.newMessageAlert?.count === nextProps.newMessageAlert?.count &&
+        prevProps.handleDeleteChat === nextProps.handleDeleteChat
+    );
+});
