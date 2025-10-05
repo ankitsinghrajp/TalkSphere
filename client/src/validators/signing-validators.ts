@@ -5,15 +5,10 @@ export const SignInSchema = z.object({
     .string()
     .nonempty("Username is required!")
     .min(5, "Username must contain atleast 5 characters")
-    .max(30, "Username must not contain more than 30 characters")
-    .regex(/^[a-zA-Z0-9_\.]{3,20}$/,"The username is invalid!"),
+    .max(30, "Username must not contain more than 30 characters"),
   password: z
     .string()
     .nonempty("Password is required!")
-    .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
-      "Password must atleast 1 uppercase 1 lowercase and 1 digit and it should be 8 characters long!"
-    ),
 });
 
 export const SignUpSchema = z.object({
