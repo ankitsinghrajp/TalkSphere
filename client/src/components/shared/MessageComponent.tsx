@@ -8,36 +8,45 @@ const MessageComponent = ({message, user, theme = 'dark'}) => {
     const timeAgo = moment(createdAt).fromNow();
     const sameSender = sender?._id === user?._id;
     
+    
     const isDark = theme === 'dark';
   
     return (
-        <div className={`flex mb-4 ${sameSender ? "justify-end" : "justify-start"}`}>
-            <div className={`max-w-sm lg:max-w-md ${sameSender ? "ml-16" : "mr-16"}`}>
+        <div className={`flex mb-3 ${sameSender ? "justify-end" : "justify-start"}`}>
+            {/* Message Content */}
+            <div className={`flex flex-col max-w-[65%] ${sameSender ? "items-end" : "items-start"}`}>
+                {/* Sender Name */}
                 {!sameSender && (
-                    <div className={`text-xs mb-2 px-3 font-medium ${
-                        isDark ? 'text-gray-400' : 'text-gray-600'
-                    }`}>
-                        {sender.name}
+                    <div className="mb-1 px-1">
+                        <span className={`text-xs font-semibold ${
+                            isDark ? 'text-gray-300' : 'text-gray-700'
+                        }`}>
+                            {sender.name}
+                        </span>
                     </div>
                 )}
                 
-                <div className={`px-4 py-3 rounded-2xl shadow-sm ${
+                {/* Message Bubble */}
+                <div className={`relative px-3.5 py-2 rounded-2xl backdrop-blur-sm transition-all duration-200 ${
                     sameSender 
-                        ? "dark:bg-gray-800 border dark:border-gray-700/50 shadow-gray-900/20 dark:text-gray-100 text-gray-800 bg-slate-400" 
-                            
+                        ? isDark
+                            ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/20" 
+                            : "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md"
                         : isDark
-                            ? "dark:bg-gray-800 bg-slate-400 dark:text-gray-100 text-gray-950 border dark:border-gray-700/50 shadow-gray-900/20" 
-                            : "bg-white text-gray-800 border border-gray-200 shadow-gray-100/60"
-                }`}>
+                            ? "bg-gray-800/80 text-gray-100 border border-gray-700/50 shadow-md" 
+                            : "bg-white text-gray-800 border border-gray-200 shadow-sm"
+                } ${sameSender ? "rounded-tr-sm" : "rounded-tl-sm"}`}>
+                    
+                    {/* Text Content */}
                     {content && (
-                        <div className="text-sm leading-relaxed mb-2 last:mb-0">
+                        <div className="text-[13px] leading-relaxed whitespace-pre-wrap break-words">
                             {content}
                         </div>
                     )}
                     
                     {/* Attachments */}
                     {attachments.length > 0 && (
-                        <div className="space-y-2 mt-3">
+                        <div className={`space-y-2 ${content ? 'mt-2' : ''}`}>
                             {attachments.map((attachment, index) => {
                                 const url = attachment.url;
                                 const file = fileFormat(url);
@@ -60,35 +69,30 @@ const MessageComponent = ({message, user, theme = 'dark'}) => {
                             })}
                         </div>
                     )}
-                    
-                    <div className="flex items-center justify-end mt-2 space-x-1">
-                        <span className={`text-xs font-medium ${
-                            sameSender 
-                                ? isDark 
-                                    ? 'text-blue-200' 
-                                    : 'text-blue-100'
-                                : isDark 
-                                    ? 'text-gray-400' 
-                                    : 'text-gray-500'
-                        }`}>
-                            {timeAgo}
-                        </span>
-                        {sameSender && (
-                            <svg 
-                                className={`w-4 h-4 ${
-                                    isDark ? 'text-blue-200' : 'text-blue-100'
-                                }`} 
-                                fill="currentColor" 
-                                viewBox="0 0 20 20"
-                            >
-                                <path 
-                                    fillRule="evenodd" 
-                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
-                                    clipRule="evenodd" 
-                                />
-                            </svg>
-                        )}
-                    </div>
+                </div>
+                
+                {/* Time - shown for all messages */}
+                <div className="flex items-center gap-1.5 mt-1 px-1">
+                    <span className={`text-[10px] ${
+                        isDark ? 'text-gray-500' : 'text-gray-400'
+                    }`}>
+                        {timeAgo}
+                    </span>
+                    {sameSender && (
+                        <svg 
+                            className={`w-3.5 h-3.5 ${
+                                isDark ? 'text-blue-400' : 'text-blue-500'
+                            }`} 
+                            fill="currentColor" 
+                            viewBox="0 0 20 20"
+                        >
+                            <path 
+                                fillRule="evenodd" 
+                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
+                                clipRule="evenodd" 
+                            />
+                        </svg>
+                    )}
                 </div>
             </div>
         </div>

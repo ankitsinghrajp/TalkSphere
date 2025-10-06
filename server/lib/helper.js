@@ -6,7 +6,7 @@ export const getOtherMember = (members, userId)=>{
 
 // We are finding the socket ids from giving user ids
 export const getSockets = (users=[])=>{
-  return users.map((user)=> userSocketIDs.get(user._id.toString()));
+  return users?.map((user)=> userSocketIDs.get(user.toString()));
 }
 
 
