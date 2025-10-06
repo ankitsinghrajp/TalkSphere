@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sheet";
 import { setIsMobileMenu } from "../../redux/reducers/misc";
 import { useErrors } from "../../hooks/hook";
+import { useSocket } from "../../socket";
 
 const ChatList = lazy(() => import("../specific/ChatList"));
 
@@ -78,6 +79,10 @@ const AppLayout = (layoutProps: AppLayoutProps = {}) => <P extends object>(Wrapp
     const params = useParams();
     const chatId = params.chatId;
     const { isLoading, data, isError, error } = useMyChatsQuery("");
+
+    const socket = useSocket();
+    
+    console.log("This is the socket: ",socket.id);
 
     useErrors([{isError,error}]);
     // Memoize chats data to prevent unnecessary re-renders

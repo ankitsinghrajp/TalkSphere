@@ -10,44 +10,43 @@ import { Server } from "socket.io";
 import { createServer } from "http";
 import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
 import { v4 as uuid } from "uuid";
-// import {
-//   createGroupChats,
-//   createMessagesInAChat,
-//   createSingleChats,
-// } from "./seeders/chatSeeder.js";
-
 import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/message.js";
 import cors from "cors";
-import {v2 as cloudinary} from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
+import { socketAuthenticator } from "./middlewares/auth.js";
 
 configDotenv();
 const app = express();
 const server = createServer(app);
-const io = new Server(server, {});
+
+const io = new Server(server, {
+  cors: {
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:4173",
+      process.env.CLIENT_URL,
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
 
 const PORT = process.env.PORT || 3000;
 
 export const userSocketIDs = new Map();
 
 connectDb(process.env.DATABASE_URL);
-// createSingleChats(40);
-// createGroupChats(40);
-// createMessagesInAChat("68d4ba6dfc60714f98acfa17",50);
 
 cloudinary.config({
-  cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-
-
-
-//Middlewares
+// Middlewares
 app.use(express.json());
 app.use(cookieParser());
-
 app.use(
   cors({
     origin: [
@@ -63,20 +62,20 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/chat", chatRoute);
 app.use("/api/v1/admin", adminRoute);
 
-io.use((socket, next) => {});
+// Socket.io middleware
 
-// socket.io connection
+io.use((socket,next)=>{
+  cookieParser()(socket.request,socket.request.response, async (err)=>{
+      await socketAuthenticator(err,socket,next);
+  })
+})
+
 io.on("connection", (socket) => {
-  console.log("User is connected!", socket.id);
+  console.log("User connected:", socket.id);
 
-  const user = {
-    _id: "dkdghggdkdkghddk",
-    name: "Raghunath Malviya",
-  };
+  const user =  socket.user;
 
   userSocketIDs.set(user._id.toString(), socket.id);
-
-  console.log(userSocketIDs);
 
   socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
     const messageForRealTime = {
@@ -89,7 +88,6 @@ io.on("connection", (socket) => {
         createdAt: new Date().toISOString(),
       },
     };
-    console.log("New Message", messageForRealTime);
 
     const messageForDB = {
       content: message,
@@ -112,14 +110,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("user disconnected!");
+    console.log("User disconnected:", socket.id);
     userSocketIDs.delete(user._id.toString());
   });
 });
 
-// Error Middleware
+// Error middleware
 app.use(errorMiddleware);
 
 server.listen(PORT, () => {
-  console.log("The app is listening on the port: ", PORT);
+  console.log(` Server running on http://localhost:${PORT}`);
 });

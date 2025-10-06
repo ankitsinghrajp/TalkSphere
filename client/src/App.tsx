@@ -6,6 +6,7 @@ import axios from "axios";
 import { server } from "./components/constants/config";
 import { useDispatch, useSelector } from "react-redux";
 import { userExists, userNotExists } from "./redux/reducers/auth";
+import { SocketProvider } from "./socket";
 
 // These are the dynamic imports...
 
@@ -39,7 +40,9 @@ const App = () => {
       <Suspense fallback={<LayoutLoader />}>
         <Routes>
           {/* This all are the protected routes */}
-          <Route element={<ProtectedRoute user={user} />}>
+          <Route element={<SocketProvider>
+            <ProtectedRoute user={user} />
+          </SocketProvider>}>
             <Route path="/" element={<Index />} />
             <Route path="/chat/:chatId" element={<Chat />} />
             <Route path="/groups" element={<Groups />} />

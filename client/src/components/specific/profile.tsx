@@ -13,7 +13,7 @@ type profileCardProps = {
 const Profile = () => {
   const data = localStorage.getItem("loggedInUser");
   const user = JSON.parse(data);
- console.log(user);
+ 
   return (
     <div className="w-full h-[calc(100vh-4rem)] bg-white dark:bg-gray-900 border-l-2 border-black/50 dark:border-white/50 transition-colors duration-200">
       <div className="flex flex-col items-center p-6 space-y-6">
@@ -22,7 +22,7 @@ const Profile = () => {
           <Avatar className="w-24 h-24 border-4 border-gray-200 dark:border-gray-600 shadow-lg transition-all duration-200 hover:shadow-xl">
             <AvatarImage src={user?.avatar?.url} className="object-cover" />
             <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xl font-semibold">
-              AS
+              {user?.name?.slice(0, 1).toUpperCase() || "*"}
             </AvatarFallback>
           </Avatar>
         </div>

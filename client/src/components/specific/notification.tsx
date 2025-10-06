@@ -1,15 +1,39 @@
 import { memo } from "react";
-import { SampleNotifications } from "../constants/sampleData"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { Check, X } from "lucide-react";
+import { useAcceptFriendRequestMutation, useGetNotificationsQuery } from "../../redux/api/api";
+import { useErrors } from "../../hooks/hook";
+import { toast } from "sonner";
 
 const Notification = () => {
 
-  const friendRequestHandler = ({_id, accept})=>{
-    console.log("handler is calling guys!");
+  const {isLoading, isError, data, error} = useGetNotificationsQuery();
+
+  const [acceptRequest] = useAcceptFriendRequestMutation();
+ 
+  const friendRequestHandler = async({_id, accept})=>{
+       try {
+         const res = await acceptRequest({requestId:_id, accept});
+         if(res.data){
+             toast.success(res.data.message);
+             console.log("Use socket here!");
+         }
+         else{
+          toast.error("Something went wrong!");
+         }
+       } catch (error) {
+           if(accept){
+            toast.error("Error in accepting friend request!");
+           }
+           else{
+            toast.error("Error in rejecting friend request!");
+           }
+       }
+      
   }
 
+  useErrors([{error, isError}]);
   return (
     <div className="absolute top-full right-4 w-80 max-w-[90vw] bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 z-50 mt-2 max-h-96 overflow-hidden flex flex-col">
       {/* Fixed Header */}
@@ -21,9 +45,10 @@ const Notification = () => {
       <div className="flex-1 overflow-y-auto">
         <div className="p-1">
           <div className="dark:text-gray-100 text-gray-700">
-            {SampleNotifications.length > 0 ?   
+           
+            {!isLoading && data?.requests.length > 0 ?   
               <div className="space-y-2 h-[400px] pt-5 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent hover:scrollbar-thumb-gray-500">
-                {SampleNotifications.map((notification)=>(
+                {data?.requests.map((notification)=>(
                   <NotificationItem 
                     sender={notification.sender}
                     _id={notification._id}

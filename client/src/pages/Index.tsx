@@ -17,7 +17,7 @@ const Index = () => {
             <div className="mb-8">
               <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 dark:from-blue-400 dark:via-purple-400 dark:to-blue-300 bg-clip-text text-transparent leading-tight">
                 Welcome to
-                <span className="block mt-2 text-5xl font-black">
+                <span className="block mt-2 text-5xl pb-4 font-black">
                   TalkSphere
                 </span>
               </h1>
