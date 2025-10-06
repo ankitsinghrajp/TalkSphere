@@ -12,7 +12,6 @@ import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { userNotExists } from "../../redux/reducers/auth";
 import { setIsMobileMenu, setIsSearch} from "../../redux/reducers/misc";
-import { useLazySearchUserQuery } from "../../redux/api/api";
 
 // Memoize logo to prevent re-renders
 const TalkSphereLogo = memo(() => {
@@ -41,7 +40,6 @@ const Header = () => {
   const [isNewGroup, setIsNewGroup] = useState(false);
   const [isNotification, setIsNotification] = useState(false);
   const {isSearch} = useSelector((state)=>state.misc);
-  const [searchUser] = useLazySearchUserQuery();
 
   // Memoize all handlers with useCallback
   const handleMobile = useCallback(() => {

@@ -2,6 +2,7 @@ import React, { type ReactNode } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { AtSign, Calendar, User } from "lucide-react";
 import moment from "moment"
+import { useSelector } from "react-redux";
 
 type profileCardProps = {
   text: string,
@@ -10,13 +11,16 @@ type profileCardProps = {
 }
 
 const Profile = () => {
+  const data = localStorage.getItem("loggedInUser");
+  const user = JSON.parse(data);
+ console.log(user);
   return (
     <div className="w-full h-[calc(100vh-4rem)] bg-white dark:bg-gray-900 border-l-2 border-black/50 dark:border-white/50 transition-colors duration-200">
       <div className="flex flex-col items-center p-6 space-y-6">
         {/* Avatar Section */}
         <div className="flex flex-col items-center space-y-4">
           <Avatar className="w-24 h-24 border-4 border-gray-200 dark:border-gray-600 shadow-lg transition-all duration-200 hover:shadow-xl">
-            <AvatarImage src="https://github.com/shadcn.png" className="object-cover" />
+            <AvatarImage src={user?.avatar?.url} className="object-cover" />
             <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xl font-semibold">
               AS
             </AvatarFallback>
@@ -27,22 +31,22 @@ const Profile = () => {
         <div className="w-full space-y-4">
           <ProfileCard 
             heading="Bio" 
-            text="We are here to put a dent in the universe otherwise why else even be here!" 
+            text={user?.bio}
           />
           <ProfileCard 
             Icon={<AtSign className="w-5 h-5 text-blue-500 dark:text-blue-400" />} 
             heading="Username" 
-            text="ankit.singh.rajput404" 
+            text={user?.username}
           />
           <ProfileCard 
             Icon={<User className="w-5 h-5 text-green-500 dark:text-green-400" />} 
             heading="Name" 
-            text="Ankit Singh Chouhan" 
+            text={user.name}
           />
           <ProfileCard 
             Icon={<Calendar className="w-5 h-5 text-purple-500 dark:text-purple-400" />} 
             heading="Joined" 
-            text={moment('2025-09-05T10:15:30.000Z').fromNow()} 
+            text={moment(user?.createdAt).fromNow()} 
           />
         </div>
       </div>

@@ -65,8 +65,9 @@ const Login = () => {
         username:dataFromUser.username,
         password:dataFromUser.password
       },config)
-
-      dispatch(userExists(true));
+      
+      dispatch(userExists(data.user));
+      localStorage.setItem("loggedInUser",JSON.stringify(data.user));
 
       toast.success(data.message);
 
@@ -101,7 +102,8 @@ const Login = () => {
          );
 
 
-         dispatch(userExists(true));
+         dispatch(userExists(data.user));
+      localStorage.setItem("loggedInUser",JSON.stringify(data.user));
          toast.success(data.message);
         } catch (error) {
           toast.error(error?.response?.data?.message || "Something Went Wrong");

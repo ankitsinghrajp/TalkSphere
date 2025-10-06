@@ -127,7 +127,6 @@ export const sendFriendRequest = async (req, res, next)=>{
         {sender:userId, receiver:req.user._id},
         {sender:req.user._id, receiver:userId}
       ]
-       
     })
 
     if(request) return next(new Error("Request already sent!"));
