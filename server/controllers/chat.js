@@ -3,7 +3,7 @@ import { getOtherMember } from "../lib/helper.js";
 import {Chat} from "../models/chat.js";
 import { Message } from "../models/message.js";
 import { User } from "../models/user.js";
-import { deleteFilesFromCloudinary, emitEvent } from "../utils/features.js";
+import { deleteFilesFromCloudinary, emitEvent, uploadFilesToCloudinary } from "../utils/features.js";
 
 
 export const newGroupChat = async (req,res,next)=>{
@@ -259,7 +259,7 @@ export const sendAttachments = async (req, res, next)=>{
 
         // Upload files here
 
-        const attachments = [];
+        const attachments = await uploadFilesToCloudinary(files);
  
         const messageForDB = {
             content:"", 

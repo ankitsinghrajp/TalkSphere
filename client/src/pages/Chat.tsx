@@ -41,6 +41,14 @@ const Chat = ({chatId}) => {
   
   useErrors(errors);
 
+  // Clear all the chat data when chatId switched
+  useEffect(() => {
+  setMessages([]);
+  setOldMessages([]);
+  setPage(1);
+  setMessage("");
+}, [chatId]);
+
   // Update old messages and preserve scroll position
   useEffect(() => {
     if (oldMessagesChunk?.data?.messages) {
@@ -189,6 +197,7 @@ const Chat = ({chatId}) => {
           anchorE1={FileMenuRef.current} 
           onClose={handleCloseFileMenu}
           isOpen={isFileMenuOpen}
+          chatId={chatId}
         />
       </div>
     </div>
