@@ -247,7 +247,7 @@ export const sendAttachments = async (req, res, next)=>{
             Chat.findById(chatId),
             User.findById(req.user._id, "name")
         ])
-
+       console.log("This is the chat: ",chat);
         
         if(!chat) return next(new Error("Chat not found!"));
         

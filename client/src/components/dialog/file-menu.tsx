@@ -67,7 +67,7 @@ const selectFile = (ref)=>{
   const fileChangeHandler = async (e, key)=>{
 
     const files = Array.from(e.target.files);
-
+    
     if(files.length <= 0) return;
 
     if(files.length > 5) return toast.error(`You can only attached 5 ${key} at a time.`);
