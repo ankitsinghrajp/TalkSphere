@@ -16,7 +16,7 @@ import { setIsMobileMenu } from "../../redux/reducers/misc";
 import { useErrors, useSocketEvents } from "../../hooks/hook";
 import { useSocket } from "../../socket";
 import { NEW_MESSAGE_ALERT, NEW_REQUEST } from "../constants/events";
-import { incrementNotification } from "../../redux/reducers/chat";
+import { incrementNotification, setNewMessagesAlert } from "../../redux/reducers/chat";
 
 const ChatList = lazy(() => import("../specific/ChatList"));
 
@@ -79,6 +79,7 @@ const AppLayout = (layoutProps: AppLayoutProps = {}) => <P extends object>(Wrapp
   return memo((props: P) => {
     const dispatch = useDispatch();
     const { isMobileMenu } = useSelector((state) => state.misc);
+    const {newMessageAlert} = useSelector((state)=> state.chat);
     const params = useParams();
     const chatId = params.chatId;
     const { isLoading, data, isError, error } = useMyChatsQuery("");
@@ -109,9 +110,10 @@ const AppLayout = (layoutProps: AppLayoutProps = {}) => <P extends object>(Wrapp
           chats={chats} 
           chatId={chatId} 
           handleDeleteChat={handleDeleteChat} 
+          newMessagesAlert={newMessageAlert}
         />
       );
-    }, [isLoading, hasChats, chats, chatId, handleDeleteChat]);
+    }, [isLoading, hasChats, chats, chatId, handleDeleteChat, newMessageAlert]);
 
     // Desktop chat list content
     const desktopChatListContent = useMemo(() => {
@@ -122,14 +124,19 @@ const AppLayout = (layoutProps: AppLayoutProps = {}) => <P extends object>(Wrapp
           chats={chats} 
           chatId={chatId} 
           handleDeleteChat={handleDeleteChat} 
+          newMessagesAlert={newMessageAlert}
         />
       );
-    }, [isLoading, hasChats, chats, chatId, handleDeleteChat]);
+    }, [isLoading, hasChats, chats, chatId, handleDeleteChat, newMessageAlert]);
 
-      const newMessagesAlertHandler = useCallback(()=>{
-
-           
-      },[])
+      const newMessagesAlertHandler = useCallback((data)=>{
+         
+          if(data?.chatId !== chatId){
+             dispatch(setNewMessagesAlert(data));
+          }
+      
+      },[chatId,dispatch]);
+      
       const newRequestHandler = useCallback(()=>{ 
         dispatch(incrementNotification());    
       },[dispatch]);

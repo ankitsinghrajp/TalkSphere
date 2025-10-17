@@ -10,6 +10,8 @@ import { useChatDetailsQuery, useGetMessagesQuery } from '../redux/api/api'
 import { CircleLoader } from 'react-spinners'
 import { useErrors, useSocketEvents } from '../hooks/hook'
 import { useTopInfiniteScroll } from '../hooks/useTopInfiniteScroll'
+import { useDispatch } from 'react-redux'
+import { removeNewMessagesAlert } from '../redux/reducers/chat'
 
 
 const Chat = ({chatId}) => {
@@ -20,6 +22,7 @@ const Chat = ({chatId}) => {
   const [messages, setMessages] = useState([]);
   const [page, setPage] = useState(1);
   const [oldMessages, setOldMessages] = useState([]);
+  const dispatch = useDispatch();
 
   const userString = localStorage.getItem("loggedInUser");
   const user = JSON.parse(userString);
@@ -43,6 +46,9 @@ const Chat = ({chatId}) => {
 
   // Clear all the chat data when chatId switched
   useEffect(() => {
+ 
+    dispatch(removeNewMessagesAlert(chatId));
+    
   setMessages([]);
   setOldMessages([]);
   setPage(1);
@@ -120,8 +126,10 @@ const Chat = ({chatId}) => {
   }
 
   const newMessagesHandler = useCallback((data) => {
-    setMessages((prev) => [...prev, data.message]);
-  }, []);
+    if(data?.chatId === chatId){
+      setMessages((prev) => [...prev, data.message]);
+    }
+  }, [chatId]);
 
   const eventHandlers = {[NEW_MESSAGE]: newMessagesHandler};
 

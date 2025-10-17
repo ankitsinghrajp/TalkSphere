@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { userNotExists } from "../../redux/reducers/auth";
 import { setIsMobileMenu, setIsSearch} from "../../redux/reducers/misc";
+import { resetNotificationCount } from "../../redux/reducers/chat";
 
 // Memoize logo to prevent re-renders
 const TalkSphereLogo = memo(() => {
@@ -63,8 +64,10 @@ const Header = () => {
 
   const openNotification = useCallback(() => {
     setIsNotification((prev) => !prev);
+  
     // Close other dialogs when notification is opened
     dispatch(setIsSearch(false));
+    dispatch(resetNotificationCount());
     setIsNewGroup(false);
   }, [dispatch]);
 
