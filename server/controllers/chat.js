@@ -1,4 +1,4 @@
-import { ALERT, NEW_ATTACHMENT, NEW_MESSAGE_ALERT, REFETCH_CHATS } from "../constants/events.js";
+import { ALERT, NEW_ATTACHMENT, NEW_MESSAGE, NEW_MESSAGE_ALERT, REFETCH_CHATS } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
 import {Chat} from "../models/chat.js";
 import { Message } from "../models/message.js";
@@ -247,15 +247,13 @@ export const sendAttachments = async (req, res, next)=>{
             Chat.findById(chatId),
             User.findById(req.user._id, "name")
         ])
-       console.log("This is the chat: ",chat);
-        
+   
         if(!chat) return next(new Error("Chat not found!"));
         
         const files = req.files || [];
 
         if(files.length < 1) return next(new Error("Please attach atleast one file!"));
         if(files.length > 5) return next(new Error("Only 5 files can be attached at once!"));
-
 
         // Upload files here
 
@@ -280,20 +278,20 @@ export const sendAttachments = async (req, res, next)=>{
 
         emitEvent(
             req,
-            NEW_ATTACHMENT,
+            NEW_MESSAGE,
             chat.members,
             {
                 message:messageForRealTime,
-                chatId
+                _id:chatId
             }
         )
 
-        emitEvent(
-            req,
-            NEW_MESSAGE_ALERT,
-            chat.members,
-            {chatId}
-        )
+        // emitEvent(
+        //     req,
+        //     NEW_MESSAGE,
+        //     chat.members,
+        //     {chatId}
+        // )
 
     return res.status(200).json({
         success:true,

@@ -32,6 +32,9 @@ const io = new Server(server, {
   },
 });
 
+
+app.set("io",io);
+
 const PORT = process.env.PORT || 3000;
 
 export const userSocketIDs = new Map();

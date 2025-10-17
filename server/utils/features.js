@@ -8,7 +8,7 @@ export const cookieOptions = {
 }
 import { v4 as uuid } from "uuid";
 import {v2 as cloudinary} from "cloudinary";
-import { getBase64 } from "../lib/helper.js";
+import { getBase64, getSockets } from "../lib/helper.js";
 
 export const connectDb = (uri)=>{
     try {
@@ -77,7 +77,8 @@ export const deleteFilesFromCloudinary = async (public_ids)=>{
 
 }
 
-
-export const emitEvent = (req, event, user, data)=>{
-     console.log("Emitting Event!",event);
+export const emitEvent = (req, event, users, data)=>{
+    const io = req.app.get("io");
+    const userSocket = getSockets(users);
+    io.to(userSocket).emit(event,data);
 }

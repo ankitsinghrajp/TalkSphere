@@ -5,11 +5,15 @@ import { Check, X } from "lucide-react";
 import { useAcceptFriendRequestMutation, useGetNotificationsQuery } from "../../redux/api/api";
 import { useErrors } from "../../hooks/hook";
 import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { resetNotificationCount } from "../../redux/reducers/chat";
 
 const Notification = () => {
 
   const {isLoading, isError, data, error} = useGetNotificationsQuery();
 
+  const dispatch = useDispatch();
+ 
   const [acceptRequest] = useAcceptFriendRequestMutation();
  
   const friendRequestHandler = async({_id, accept})=>{
@@ -18,6 +22,8 @@ const Notification = () => {
          if(res.data){
              toast.success(res.data.message);
              console.log("Use socket here!");
+
+           dispatch(resetNotificationCount());
          }
          else{
           toast.error("Something went wrong!");

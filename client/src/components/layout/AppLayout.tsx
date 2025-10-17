@@ -1,4 +1,4 @@
-import React, { lazy, memo, useCallback, useEffect, useMemo, type ComponentType, type ReactNode } from "react";
+import React, { lazy, memo, useCallback, useMemo, type ComponentType, type ReactNode } from "react";
 import Header from "./Header";
 import Title from "../shared/Title";
 import { useParams } from "react-router-dom";
@@ -13,7 +13,10 @@ import {
   SheetDescription 
 } from "@/components/ui/sheet";
 import { setIsMobileMenu } from "../../redux/reducers/misc";
-import { useErrors } from "../../hooks/hook";
+import { useErrors, useSocketEvents } from "../../hooks/hook";
+import { useSocket } from "../../socket";
+import { NEW_MESSAGE_ALERT, NEW_REQUEST } from "../constants/events";
+import { incrementNotification } from "../../redux/reducers/chat";
 
 const ChatList = lazy(() => import("../specific/ChatList"));
 
@@ -72,13 +75,14 @@ const EmptyChatState = memo(() => (
 EmptyChatState.displayName = "EmptyChatState";
 
 const AppLayout = (layoutProps: AppLayoutProps = {}) => <P extends object>(WrappedComponent: ComponentType<P>) => {
+  
   return memo((props: P) => {
     const dispatch = useDispatch();
     const { isMobileMenu } = useSelector((state) => state.misc);
     const params = useParams();
     const chatId = params.chatId;
     const { isLoading, data, isError, error } = useMyChatsQuery("");
-   
+   const socket = useSocket();
     
 
     useErrors([{isError,error}]);
@@ -121,6 +125,21 @@ const AppLayout = (layoutProps: AppLayoutProps = {}) => <P extends object>(Wrapp
         />
       );
     }, [isLoading, hasChats, chats, chatId, handleDeleteChat]);
+
+      const newMessagesAlertHandler = useCallback(()=>{
+
+           
+      },[])
+      const newRequestHandler = useCallback(()=>{ 
+        dispatch(incrementNotification());    
+      },[dispatch]);
+
+      const eventHandlers = {
+        [NEW_MESSAGE_ALERT]: newMessagesAlertHandler,
+        [NEW_REQUEST]:newRequestHandler,
+      };
+     
+      useSocketEvents(socket, eventHandlers);
 
     return (
       <div className="dark:bg-gray-950/95 w-full bg-gray-200">

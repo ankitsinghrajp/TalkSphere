@@ -130,7 +130,7 @@ const selectFile = (ref)=>{
             multiple 
             accept='image/png, image/jpeg, image/gif, image/jpg' 
             style={{display:"none"}}
-            onChange={(e)=> fileChangeHandler(e,"Images")}
+            onChange={(e)=> fileChangeHandler(e,"Image")}
              ref={imageRef}
             />
           </div>
@@ -147,7 +147,7 @@ const selectFile = (ref)=>{
             multiple 
             accept='video/mp4, video/webm, video/ogg' 
             style={{display:"none"}}
-            onChange={(e)=> fileChangeHandler(e,"Videos")}
+            onChange={(e)=> fileChangeHandler(e,"Video")}
              ref={videoRef}
             />
           </div>
@@ -165,7 +165,7 @@ const selectFile = (ref)=>{
             multiple 
             accept='audio/mpeg, audio/wav, audio/ogg' 
             style={{display:"none"}}
-            onChange={(e)=> fileChangeHandler(e,"Audios")}
+            onChange={(e)=> fileChangeHandler(e,"Audio")}
              ref={audioRef}
             />
           </div>
@@ -182,7 +182,7 @@ const selectFile = (ref)=>{
             multiple 
             accept='*' 
             style={{display:"none"}}
-            onChange={(e)=> fileChangeHandler(e,"Files")}
+            onChange={(e)=> fileChangeHandler(e,"File")}
             ref={fileRef}
             />
           </div>

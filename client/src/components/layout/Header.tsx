@@ -1,6 +1,6 @@
-import React, { lazy, useState, useCallback, memo, useEffect } from "react";
+import React, { useState, useCallback, memo, useEffect } from "react";
 import { ModeToggle } from "../toggle-theme";
-import { Bell, Group, LogOut, Menu, PlusIcon, SearchIcon, Users } from "lucide-react";
+import { Bell, LogOut, Menu, PlusIcon, SearchIcon, Users } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useNavigate } from "react-router-dom";
 import Search from "../specific/search";
@@ -40,6 +40,7 @@ const Header = () => {
   const [isNewGroup, setIsNewGroup] = useState(false);
   const [isNotification, setIsNotification] = useState(false);
   const {isSearch} = useSelector((state)=>state.misc);
+  const {notificationCount} = useSelector((state)=>state.chat);
 
   // Memoize all handlers with useCallback
   const handleMobile = useCallback(() => {
@@ -148,10 +149,17 @@ const Header = () => {
               {/* Notifications */}
               <Tooltip>
                 <TooltipTrigger>
-                  <Bell
-                    onClick={openNotification}
-                    className="w-5 h-5 hover:text-gray-900 hover:cursor-pointer text-gray-700 hover:dark:text-gray-400 dark:text-gray-200"
-                  />
+                  <div className="relative">
+                    <Bell
+                      onClick={openNotification}
+                      className="w-5 h-5 hover:text-gray-900 hover:cursor-pointer text-gray-700 hover:dark:text-gray-400 dark:text-gray-200"
+                    />
+                    {notificationCount > 0 && (
+                      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
+                        {notificationCount > 9 ? '9+' : notificationCount}
+                      </span>
+                    )}
+                  </div>
                 </TooltipTrigger>
                 <TooltipContent>Notification</TooltipContent>
               </Tooltip>
