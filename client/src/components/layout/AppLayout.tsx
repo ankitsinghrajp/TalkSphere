@@ -1,4 +1,4 @@
-import React, { lazy, memo, useCallback, useMemo, type ComponentType, type ReactNode } from "react";
+import React, { lazy, memo, useCallback, useEffect, useMemo, type ComponentType, type ReactNode } from "react";
 import Header from "./Header";
 import Title from "../shared/Title";
 import { useParams } from "react-router-dom";
@@ -17,6 +17,7 @@ import { useErrors, useSocketEvents } from "../../hooks/hook";
 import { useSocket } from "../../socket";
 import { NEW_MESSAGE_ALERT, NEW_REQUEST } from "../constants/events";
 import { incrementNotification, setNewMessagesAlert } from "../../redux/reducers/chat";
+import { getOrSaveFromStorage } from "../../lib/feature";
 
 const ChatList = lazy(() => import("../specific/ChatList"));
 
@@ -87,6 +88,8 @@ const AppLayout = (layoutProps: AppLayoutProps = {}) => <P extends object>(Wrapp
     
 
     useErrors([{isError,error}]);
+
+
     // Memoize chats data to prevent unnecessary re-renders
     const chats = useMemo(() => data?.chats || [], [data?.chats]);
     const hasChats = chats.length > 0;
@@ -136,6 +139,10 @@ const AppLayout = (layoutProps: AppLayoutProps = {}) => <P extends object>(Wrapp
           }
       
       },[chatId,dispatch]);
+
+          useEffect(()=>{
+      getOrSaveFromStorage({key:NEW_MESSAGE_ALERT, value: newMessageAlert}); 
+    },[newMessageAlert])
       
       const newRequestHandler = useCallback(()=>{ 
         dispatch(incrementNotification());    

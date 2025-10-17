@@ -5,9 +5,9 @@ import { Input } from '../components/ui/input'
 import FileMenu from '../components/dialog/file-menu'
 import MessageComponent from '../components/shared/MessageComponent'
 import { useSocket } from '../socket'
-import { NEW_MESSAGE } from '../components/constants/events'
+import { NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../components/constants/events'
 import { useChatDetailsQuery, useGetMessagesQuery } from '../redux/api/api'
-import { CircleLoader } from 'react-spinners'
+import { CircleLoader, SyncLoader } from 'react-spinners'
 import { useErrors, useSocketEvents } from '../hooks/hook'
 import { useTopInfiniteScroll } from '../hooks/useTopInfiniteScroll'
 import { useDispatch } from 'react-redux'
@@ -23,6 +23,12 @@ const Chat = ({chatId}) => {
   const [page, setPage] = useState(1);
   const [oldMessages, setOldMessages] = useState([]);
   const dispatch = useDispatch();
+
+  const [IAmTyping, setIAmTyping] = useState(false);
+  const [userTyping, setUserTyping] = useState(false);
+
+  const typingTimeOut = useRef(null);
+
 
   const userString = localStorage.getItem("loggedInUser");
   const user = JSON.parse(userString);
@@ -115,6 +121,23 @@ const Chat = ({chatId}) => {
     setIsFileMenuOpen(false);
   }
 
+  const MessageOnChange = (e)=>{
+      setMessage(e.target.value);
+
+      if(!IAmTyping){
+        socket.emit(START_TYPING, {members, chatId});
+        setIAmTyping(true);
+
+      }
+
+      if(typingTimeOut.current) clearTimeout(typingTimeOut.current);
+
+     typingTimeOut.current =  setTimeout(()=>{
+          socket.emit(STOP_TYPING,{members,chatId})
+          setIAmTyping(false);
+      },[2000])
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -131,7 +154,31 @@ const Chat = ({chatId}) => {
     }
   }, [chatId]);
 
-  const eventHandlers = {[NEW_MESSAGE]: newMessagesHandler};
+  const startTypingListener = useCallback(
+    (data)=>{
+       
+      if(data.chatId === chatId){
+        setUserTyping(true);
+      }
+  },[chatId]
+)
+
+const stopTypingListener = useCallback(
+  (data)=>{
+    
+    if(data.chatId === chatId){
+      setUserTyping(false);
+    }
+
+  },[chatId]
+)
+
+
+  const eventHandlers = {
+    [NEW_MESSAGE]: newMessagesHandler,
+    [START_TYPING]: startTypingListener,
+    [STOP_TYPING]: stopTypingListener,
+  };
 
   useSocketEvents(socket, eventHandlers);
 
@@ -157,6 +204,21 @@ const Chat = ({chatId}) => {
         {allMessages.map((message, index) => (
           <MessageComponent key={message._id || index} message={message} user={user}/>
         ))}
+
+        {/* Typing Indicator */}
+        {userTyping && (
+          <div className='flex items-center gap-1 px-4 py-2 mb-2'>
+            <div className='text-xs font-semibold font-serif text-green-400'>
+              typing
+            </div>
+            <div className='flex gap-1 mt-1 text-green-500'>
+             <div className='w-1 h-1 bg-green-500 dark:bg-green-400 rounded-full animate-bounce' style={{ animationDelay: '0ms' }}></div>
+              <div className='w-1 h-1 bg-gray-500 dark:bg-green-400 rounded-full animate-bounce' style={{ animationDelay: '150ms' }}></div>
+              <div className='w-1 h-1 bg-gray-500 dark:bg-green-400 rounded-full animate-bounce' style={{ animationDelay: '300ms' }}></div>
+            </div>
+            
+          </div>
+        )}
         
         {/* Bottom reference for auto-scroll */}
         <div ref={bottomRef} />
@@ -186,7 +248,7 @@ const Chat = ({chatId}) => {
                 placeholder='Type your message...' 
                 className='w-full h-12 pr-14 pl-4 rounded-full border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:border-blue-500 dark:focus:border-blue-400 focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-sm hover:shadow-md focus:shadow-md'
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={MessageOnChange}
               />
               
               {/* Send Button */}

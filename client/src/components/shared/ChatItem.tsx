@@ -54,7 +54,7 @@ const ChatItem = ({
                         </h3>
                         {newMessageAlert && (
                             <div className="flex items-center mt-1">
-                                <div className="bg-blue-500 text-gray-100 text-xs px-2 py-1 rounded-full font-medium">
+                                <div className="bg-gray-500 text-gray-100 text-xs px-2 py-1 rounded-full font-medium">
                                     {newMessageAlert.count}
                                 </div>
                                 <span className="text-gray-500 dark:text-gray-400 text-xs ml-2">

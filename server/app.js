@@ -8,7 +8,7 @@ import chatRoute from "./routes/chat.js";
 import adminRoute from "./routes/admin.js";
 import { Server } from "socket.io";
 import { createServer } from "http";
-import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
+import { NEW_MESSAGE, NEW_MESSAGE_ALERT, START_TYPING, STOP_TYPING } from "./constants/events.js";
 import { v4 as uuid } from "uuid";
 import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/message.js";
@@ -111,6 +111,17 @@ io.on("connection", (socket) => {
 
     await Message.create(messageForDB);
   });
+
+  socket.on(START_TYPING, ({members, chatId})=>{
+        const membersSocket = getSockets(members);
+        socket.to(membersSocket).emit(START_TYPING,{chatId});
+  })
+
+  socket.on(STOP_TYPING, ({members, chatId})=>{
+    const membersSocket = getSockets(members);
+    socket.to(membersSocket).emit(STOP_TYPING,{chatId});
+    
+  })
 
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
