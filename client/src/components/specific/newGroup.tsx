@@ -1,13 +1,27 @@
 import { useState } from "react"
-import { SampleUsers } from "../constants/sampleData"
 import UserItem from "../shared/UserItem"
+import { useAvailableFriendsQuery, useNewGroupMutation } from "../../redux/api/api"
+import { useAsyncMutation, useErrors } from "../../hooks/hook"
+import { MoonLoader } from "react-spinners"
+import { toast } from "sonner"
 
 const NewGroup = () => {
 
-  const [groupName, setGroupName] = useState("")
-  const [members, setMembers] = useState(SampleUsers);
+  const [groupName, setGroupName] = useState("");
   const [selectedMembers, setSelectedMembers] = useState([]);
 
+  const {error, isError, data, isLoading} = useAvailableFriendsQuery();
+
+  const [newGroup, isLoadingNewGroup] = useAsyncMutation(useNewGroupMutation);
+
+
+  const errors = [{
+    isError,
+    error,
+  }];
+
+
+  useErrors(errors);
   const selectMemberHandler = (id) => {
     setSelectedMembers(prev =>
       prev.includes(id) ? prev.filter((current) => current !== id) : [...prev, id]
@@ -15,7 +29,11 @@ const NewGroup = () => {
   }
 
   const submitHandler = () => {
-    console.log("Group Created:", groupName, selectedMembers);
+    if(!groupName) return toast.error("Group Name is Required!");
+
+    if(selectedMembers.length < 2) return toast.error("Atleast 3 members are required to create a group.");
+
+    newGroup("Creating group...",{name:groupName, members:selectedMembers});
   }
 
   return (
@@ -41,7 +59,11 @@ const NewGroup = () => {
             {/* Scrollable Members List */}
             <div className="h-[300px] py-5 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 
                             scrollbar-track-transparent hover:scrollbar-thumb-gray-500">
-              {members.map((user, index) => (
+              {isLoading?<div 
+              className='w-full flex justify-center items-center mt-10'
+              >
+                <MoonLoader color='#f5f5f5' size={20}/>
+              </div>:data?.friends?.map((user, index) => (
                 <ul key={index}>
                   <UserItem 
                     user={user} 
@@ -53,9 +75,10 @@ const NewGroup = () => {
             </div>
 
             <button 
-              className="w-full mb-2 bg-blue-500 hover:bg-blue-600 text-white 
+              className="w-full mb-2 hover:cursor-pointer bg-blue-500 hover:bg-blue-600 text-white 
                          py-2 px-4 rounded-md transition-colors" 
               onClick={submitHandler}
+              disabled={isLoadingNewGroup}
             >
               Create Group
             </button>

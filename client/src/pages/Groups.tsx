@@ -5,36 +5,66 @@ import { ArrowLeft, Check, Menu, Pencil, Plus, Trash, Users } from 'lucide-react
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '../components/ui/sheet'
 import AvatarCard from '../components/shared/AvatarCard'
-import { SampleChats, SampleUsers } from '../components/constants/sampleData'
 import { Input } from '../components/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog'
 import { toast } from 'sonner'
 import AddMemberDialog from '../components/dialog/addMemberDialog'
 import UserItem from '../components/shared/UserItem'
+import { useChatDetailsQuery, useMyGroupsQuery, useRenameGroupMutation } from '../redux/api/api'
+import { useAsyncMutation, useErrors } from '../hooks/hook'
+import { MoonLoader } from 'react-spinners'
 
 const Groups = () => {
   const chatId = useSearchParams()[0].get("group");
   const navigate = useNavigate();
+
+  const myGroups = useMyGroupsQuery("");
+
+  const groupDetails = useChatDetailsQuery(
+    {chatId, populate:true},
+    {skip:!chatId},
+  );
+
+  const [updateGroup, isLoadingGroupName] = useAsyncMutation(useRenameGroupMutation);
+
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isEdit, setIsEdit] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [groupNameUpdatedValue, setGroupNameUpdatedValue] = useState("");
   const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false);
+  const [members, setMembers] = useState([]);
 
+  const errors = [{
+    isError: myGroups.isError,
+    error: myGroups.error,
+  },
+  {
+    isError: groupDetails.isError,
+    error: groupDetails.error,
+  },
+
+];
+
+  useErrors(errors);
 
     useEffect(()=>{
-      if(chatId){
-        setGroupName(`Group Name ${chatId}`);
-        setGroupNameUpdatedValue(`Group Name ${chatId}`)
+
+      if(groupDetails.data){
+        setGroupName(groupDetails.data.chat.name);
+        setGroupNameUpdatedValue(groupDetails.data.chat.name);
+        setMembers(groupDetails.data.chat.members);
       }
 
-    return ()=>{
-      setGroupName("");
-      setGroupNameUpdatedValue("");
-      setIsEdit(false);
-    }
-  },[chatId])
+      return ()=>{
+        setGroupName("");
+        setGroupNameUpdatedValue("");
+        setMembers([]);
+        setIsEdit(false);
+      }
+
+    },[groupDetails.data])
+
   
   const navigateBack = ()=>{
      navigate("/");
@@ -50,7 +80,7 @@ const Groups = () => {
 
   const updateGroupName = ()=>{
     setIsEdit(false);
-    console.log(groupNameUpdatedValue)
+    updateGroup("Updating Group Name...",{chatId,name:groupNameUpdatedValue});
   }
 
   const openConfirmDeleteHandler = ()=>{
@@ -90,7 +120,7 @@ const Groups = () => {
             <p className='text-sm text-gray-600 dark:text-gray-400 mt-1'>Select a group to manage</p>
           </div>
           <div className='h-[calc(100vh-6rem)] overflow-y-auto '>
-          <GroupsList myGroups={SampleChats} chatId={chatId}/>
+           {myGroups.isLoading?<div className='w-full flex justify-center items-center mt-10'><MoonLoader color='#f5f5f5' size={20}/></div>:<GroupsList myGroups={myGroups?.data?.data} chatId={chatId}/>}
           </div>
         </div>
         
@@ -124,7 +154,7 @@ const Groups = () => {
                   {isEdit ? (
                     <div className='flex flex-row gap-4 items-center'>
                       <Input className='py-1' value={groupNameUpdatedValue} onChange={(e)=>setGroupNameUpdatedValue(e.target.value)}/>
-                      <Button className='cursor-pointer' onClick={updateGroupName} size={'icon'} variant={'outline'}>
+                      <Button className='cursor-pointer' onClick={updateGroupName} size={'icon'} disabled={isLoadingGroupName} variant={'outline'}>
                         <Check className='h-4' />
                       </Button>
                     </div>
@@ -133,7 +163,7 @@ const Groups = () => {
                       <div className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
                         {groupName}
                       </div>
-                      <Pencil className='h-4 w-4 hover:cursor-pointer text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200' onClick={()=>{setIsEdit(true)}}/>
+                      <Pencil className='h-4 w-4 hover:cursor-pointer text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200' disabled={isLoadingGroupName} onClick={()=>{setIsEdit(true)}}/>
                     </div>
                   )}
                 </div>
@@ -162,7 +192,7 @@ const Groups = () => {
                   </SheetDescription>
                 </SheetHeader>
                 <div className='w-full h-[calc(100vh-6rem)] overflow-y-auto'>
-                  <GroupsList w={"50vw"} myGroups={SampleChats} chatId={chatId} onItemClick={handleItemClick}/>
+                  {myGroups.isLoading?<div className='w-full flex justify-center items-center mt-10'><MoonLoader color='#f5f5f5' size={20}/></div>:<GroupsList w={"50vw"} myGroups={myGroups?.data?.data} chatId={chatId} onItemClick={handleItemClick}/>}
                 </div>
               </SheetContent>
             </Sheet>
@@ -188,13 +218,16 @@ const Groups = () => {
 
                     {/* Members List */}
                     <div className='flex-1 p-4 overflow-auto'>
+                    {
+                      groupDetails.isLoading?<div className='w-full h-[200px] flex justify-center items-center mt-10'><MoonLoader color='#f5f5f5' size={20}/></div>:
                       <div className='h-[200px]'>
-                        {SampleUsers.map((i) => (
+                        {members.map((i) => (
                             <UserItem key={i._id} user={i} isAdded handler={removeMemberHandler}/>
                         ))}
                       
                       
                       </div>
+                     }
                     </div>
                   </div>
                 </div>
@@ -297,7 +330,7 @@ const GroupListItem = memo(({group, chatId, onItemClick})=>{
   
   return (
     <Link to={`?group=${_id}`} onClick={(e)=>handleClick(e)}>
-      <div className='flex items-center p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all duration-200 cursor-pointer group border border-transparent hover:border-gray-200 dark:hover:border-gray-700 hover:shadow-sm'>
+      <div className='flex items-center px-3 py-4 rounded-xl hover:bg-gray-50 bg-gray-800/90 my-2 dark:hover:bg-gray-800/50 transition-all duration-200 cursor-pointer group border border-transparent hover:border-gray-200 dark:hover:border-gray-700 hover:shadow-sm'>
         <div className='flex-shrink-0 mr-3'>
           <AvatarCard avatar={avatar}/>
         </div>

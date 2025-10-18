@@ -25,7 +25,7 @@ export const newGroupChat = async (req,res,next)=>{
 
     return res.status(201).json({
         success:true,
-        message:"Group Created",
+        message:"New Group Created Successfully.",
     })
 
 
