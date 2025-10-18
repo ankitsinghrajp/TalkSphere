@@ -5,7 +5,7 @@ import { Input } from '../components/ui/input'
 import FileMenu from '../components/dialog/file-menu'
 import MessageComponent from '../components/shared/MessageComponent'
 import { useSocket } from '../socket'
-import { NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../components/constants/events'
+import { ALERT, NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../components/constants/events'
 import { useChatDetailsQuery, useGetMessagesQuery } from '../redux/api/api'
 import { CircleLoader, SyncLoader } from 'react-spinners'
 import { useErrors, useSocketEvents } from '../hooks/hook'
@@ -173,8 +173,28 @@ const stopTypingListener = useCallback(
   },[chatId]
 )
 
+const newAlertHandler = useCallback(
+(content)=>{
+
+  const messageForAlert = {
+    content,
+    sender:{
+      _id:"dkddkggdfkgjprerequesit",
+      name:"Admin"
+    },
+    chat:chatId,
+    createdAt: new Date().toISOString(),
+  };
+
+  setMessages((prev)=>[...prev, messageForAlert]);
+
+},
+  [chatId]
+)
+
 
   const eventHandlers = {
+    [ALERT]: newAlertHandler,
     [NEW_MESSAGE]: newMessagesHandler,
     [START_TYPING]: startTypingListener,
     [STOP_TYPING]: stopTypingListener,
