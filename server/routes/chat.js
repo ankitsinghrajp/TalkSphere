@@ -12,8 +12,8 @@ router.post("/new",newGroupChatValidator(),validateHandler,newGroupChat);
 router.get("/my-chats",getMyChats);
 
 router.get("/my-groups",getMyGroups);
-router.put("/addMembers",addMemberValidator(),validateHandler,addMembers);
-router.put("/removeMember",removeMemberValidator(),validateHandler,removeMembers);
+router.put("/removemembers",removeMemberValidator(),validateHandler,removeMembers);
+router.put("/addmembers",addMemberValidator(),validateHandler,addMembers);
 router.delete("/leave/:id",chatIdValidator(),validateHandler,leaveGroup);
 
 // Send Attachments

@@ -1,13 +1,31 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
 import { Button } from '../ui/button'
-import { SampleUsers } from '../constants/sampleData'
 import UserItem from '../shared/UserItem'
+import { useDispatch } from 'react-redux'
+import { setIsAddMember } from '../../redux/reducers/misc'
+import { useAsyncMutation, useErrors } from '../../hooks/hook'
+import { useAddGroupMembersMutation, useAvailableFriendsQuery } from '../../redux/api/api'
+import { MoonLoader } from 'react-spinners'
 
-const AddMemberDialog = ({addMember, isLoadingAddMember, chatId}) => {
+const AddMemberDialog = ({chatId}) => {
 
-    const [members, setMembers] = useState(SampleUsers);
     const [selectedMembers, setSelectedMembers] = useState([]);
+    const dispatch = useDispatch();
+
+    const {isError, error, data, isLoading} = useAvailableFriendsQuery(chatId);
+
+    const errors = [
+      {
+        isError,
+        error,
+      }
+    ]
+
+    useErrors(errors);
+
+
+    const [addMember, isLoadingAddMember] = useAsyncMutation(useAddGroupMembersMutation);
 
     const selectMemberHandler = (id)=>{
          setSelectedMembers((prev)=>
@@ -16,12 +34,16 @@ const AddMemberDialog = ({addMember, isLoadingAddMember, chatId}) => {
     }
 
 const addMemberSubmitHandler = ()=>{
-       closeHandler();
+      addMember("Adding Members...",{chatId,members:selectedMembers})
+       
+  closeHandler();
 }
 
 const closeHandler = ()=>{
-     setMembers([]);
+  setSelectedMembers([]);
+  dispatch(setIsAddMember(false));
 }
+
 
 
 
@@ -34,10 +56,13 @@ const closeHandler = ()=>{
       <div>
 
         <div className='h-[400px] md:h-[350px] overflow-y-auto mt-4 mb-4'>
+           
+          
            {
-            members.length > 0 ? members.map((i)=>(
+            isLoading?<div className='w-full flex justify-center items-center mt-10'><MoonLoader color='#f5f5f5' size={20}/></div>:
+            data.friends.length > 0 ? data.friends.map((i)=>(
                <UserItem key={i._id} user={i} handler={selectMemberHandler} isAdded={selectedMembers.includes(i._id)}/>
-            )) :<p className='text-center font-semibold text-xl'>No Friends</p>
+            )) :<p className='text-center font-semibold text-xl'>All your friends are already added.</p>
            }
         </div>
          <div className='flex justify-between items-center pt-6 pb-2'>

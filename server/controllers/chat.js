@@ -109,11 +109,10 @@ export const addMembers = async (req,res, next)=>{
 
     const chat = await Chat.findById(chatId);
 
-    console.log(chat);
     if(!chat) return next(new Error("Chat not found!"));
 
     if(!chat.groupChat) return next(new Error("The Chat is not a group chat!"));
-     console.log("Creator: ",chat.creator);
+
     if(chat.creator.toString() !== req.user._id.toString()) return next(new Error("Only admins can add members!"));
 
 
@@ -161,13 +160,20 @@ export const removeMembers = async (req, res, next)=>{
 
         if(!chat) return next(new Error("Chat not found!"));
 
-        if(!chat.groupChat) return next(new Error("The chat is not a group chat!"));
+        if(!chat.groupChat) {
+            return next(new Error("The chat is not a group chat!"));
+        }
 
-        if(chat.creator.toString() !== req.user._id.toString()) return next(new Error("Only admins can remove members!"));
+        if(chat.creator.toString() !== req.user._id.toString()){
+        
+            return next(new Error("Only admins can remove members!"));
+        }
 
-        if(chat.members.length < 3){
+        if(chat.members.length <= 2){
             return next(new Error("The group must have atleast 3 members!"));
         }
+
+        const allChatMembers = chat.members.map((i)=>i.toString());
 
         chat.members = chat.members.filter((member)=> member.toString() !== userId.toString());
 
@@ -184,7 +190,7 @@ export const removeMembers = async (req, res, next)=>{
         emitEvent(
             req,
             REFETCH_CHATS,
-            chat.members
+            allChatMembers
         )
 
         return res.status(200).json({
@@ -192,6 +198,7 @@ export const removeMembers = async (req, res, next)=>{
             message:"Member removed Successfully!",
         })
     } catch (error) {
+    
         return next(error);
     }
 }
@@ -426,6 +433,12 @@ export const getChatMessages = async (req, res, next)=>{
         const resultPerPage = 20;
 
         const skip = (page-1)* resultPerPage;
+
+        const chat = await Chat.findById(chatId);
+        if(!chat) return next(new Error("Chat not found!"));
+
+        if(!chat.members.includes(req.user._id.toString())) return next(new Error("You are not allowed to access this Chat!"));
+
 
         const [messages, totalMessagesCount ] = await Promise.all([
             Message.find({chat:chatId})

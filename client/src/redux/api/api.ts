@@ -1,128 +1,174 @@
-import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { server } from "../../components/constants/config";
 
 const api = createApi({
-    reducerPath: "api",
-    baseQuery: fetchBaseQuery({
-        baseUrl:`${server}/api/v1/`
+  reducerPath: "api",
+  baseQuery: fetchBaseQuery({
+    baseUrl: `${server}/api/v1/`,
+  }),
+  tagTypes: ["Chat", "User", "Message"],
+  endpoints: (builder) => ({
+    myChats: builder.query({
+      query: () => ({
+        url: "chat/my-chats",
+        credentials: "include",
+      }),
+      providesTags: ["Chat"],
     }),
-    tagTypes:["Chat","User","Message"],
-    endpoints:(builder)=>({
-        myChats:builder.query({
-            query:()=> ({
-                url:"chat/my-chats",
-                credentials:"include",
-            }),
-            providesTags:["Chat"],
-        }),
-        searchUser: builder.query({
-            query: (name)=>({
-                url:`user/search?name=${name}`,
-                credentials:"include",
-            }),
-            providesTags:["User"],
-        }),
-       
-        sendFriendRequest: builder.mutation({
-            query:(data)=>({
-                  url:"user/sendrequest",
-                  method:"PUT",
-                  credentials:"include",
-                  body:data
-            }),
-            invalidatesTags: ["User"],
-        }),
+    searchUser: builder.query({
+      query: (name) => ({
+        url: `user/search?name=${name}`,
+        credentials: "include",
+      }),
+      providesTags: ["User"],
+    }),
 
-        getNotifications: builder.query({
-            query:()=>({
-                url:"user/notifications",
-                credentials:"include",
-            }),
-            keepUnusedDataFor:0,
-        }),
+    sendFriendRequest: builder.mutation({
+      query: (data) => ({
+        url: "user/sendrequest",
+        method: "PUT",
+        credentials: "include",
+        body: data,
+      }),
+      invalidatesTags: ["User"],
+    }),
 
-        acceptFriendRequest: builder.mutation({
-            query: (data)=>({
-                url:"user/acceptrequest",
-                method:"PUT",
-                credentials:"include",
-                body:data
-            }),
-            invalidatesTags:["Chat"],
-        }),
-        chatDetails: builder.query({
-            query:({chatId,populate=false})=>{
+    getNotifications: builder.query({
+      query: () => ({
+        url: "user/notifications",
+        credentials: "include",
+      }),
+      keepUnusedDataFor: 0,
+    }),
 
-                let url = `chat/${chatId}`;
-                if(populate) url += "?populate=true";
+    acceptFriendRequest: builder.mutation({
+      query: (data) => ({
+        url: "user/acceptrequest",
+        method: "PUT",
+        credentials: "include",
+        body: data,
+      }),
+      invalidatesTags: ["Chat"],
+    }),
+    chatDetails: builder.query({
+      query: ({ chatId, populate = false }) => {
+        let url = `chat/${chatId}`;
+        if (populate) url += "?populate=true";
 
-                return {
-                    url,
-                    credentials:"include"
-                }; 
-            },
-            providesTags:["Chat"],
-        }),
-        getMessages: builder.query({
-            query: ({chatId, page})=>({
-                url:`chat/message/${chatId}?page=${page}`,
-                credentials:"include",
-            }),
-            keepUnusedDataFor:0,
-        }),
-        sendAttachments: builder.mutation({
-            query:(data)=>({
-                url:"chat/message",
-                method:"post",
-                credentials:"include",
-                body:data,
-            })
-        }),
+        return {
+          url,
+          credentials: "include",
+        };
+      },
+      providesTags: ["Chat"],
+    }),
+    getMessages: builder.query({
+      query: ({ chatId, page }) => ({
+        url: `chat/message/${chatId}?page=${page}`,
+        credentials: "include",
+      }),
+      keepUnusedDataFor: 0,
+    }),
+    sendAttachments: builder.mutation({
+      query: (data) => ({
+        url: "chat/message",
+        method: "post",
+        credentials: "include",
+        body: data,
+      }),
+    }),
 
-        myGroups: builder.query({
-            query:()=>({
-                url:"chat/my-groups",
-                credentials:"include",
-            }),
-            providesTags:["Chat"]
-        }),
+    myGroups: builder.query({
+      query: () => ({
+        url: "chat/my-groups",
+        credentials: "include",
+      }),
+      providesTags: ["Chat"],
+    }),
 
-        availableFriends: builder.query({
-            query:(chatId)=>{
-                let url = `user/friends`;
-                if(chatId) url += `?chatId=${chatId}`;
+    availableFriends: builder.query({
+      query: (chatId) => {
+        let url = `user/friends`;
+        if (chatId) url += `?chatId=${chatId}`;
 
-                return {
-                    url,
-                    credentials: "include",
-                };
-            },
-            providesTags:["Chat"],
-        }),
-        newGroup: builder.mutation({
-            query: ({name, members})=>({
-                url:"chat/new",
-                method:"post",
-                credentials:"include",
-                body:{name,members},
-       }),
-            invalidatesTags:["Chat"],
-        }),
-        renameGroup: builder.mutation({
-            query: ({chatId, name})=>({
-                url: `chat/${chatId}`,
-                method:"put",
-                credentials:"include",
-                body: {name}
-            }),
-            invalidatesTags:["Chat"],
-        })
+        return {
+          url,
+          credentials: "include",
+        };
+      },
+      providesTags: ["Chat"],
+    }),
+    newGroup: builder.mutation({
+      query: ({ name, members }) => ({
+        url: "chat/new",
+        method: "post",
+        credentials: "include",
+        body: { name, members },
+      }),
+      invalidatesTags: ["Chat"],
+    }),
 
-      
-    })
-})
+    renameGroup: builder.mutation({
+      query: ({ chatId, name }) => ({
+        url: `chat/${chatId}`,
+        method: "put",
+        credentials: "include",
+        body: { name },
+      }),
+      invalidatesTags: ["Chat"],
+    }),
+
+    removeGroupMembers: builder.mutation({
+      query: ({ userId, chatId }) => ({
+        url: "chat/removemembers",
+        method: "put",
+        credentials: "include",
+        body: { userId, chatId },
+      }),
+      invalidatesTags: ["Chat"],
+    }),
+
+    addGroupMembers: builder.mutation({
+        query:({members, chatId})=>({
+            url:"chat/addmembers",
+            method:"put",
+            credentials:"include",
+            body:{members,chatId}
+        }),
+        invalidatesTags:["Chat"]
+    }),
+
+    deleteChat: builder.mutation({
+        query:({chatId})=>({
+            url: `chat/${chatId}`,
+            method:"delete",
+            credentials:"include",
+        }),
+        invalidatesTags:["Chat"],
+    }),
+
+
+
+
+
+  }),
+});
 
 export default api;
-export const {useMyChatsQuery, useLazySearchUserQuery, useSendFriendRequestMutation, useGetNotificationsQuery, useAcceptFriendRequestMutation, useChatDetailsQuery, useGetMessagesQuery, useSendAttachmentsMutation, useMyGroupsQuery, useAvailableFriendsQuery, useNewGroupMutation, useRenameGroupMutation} = api;
-
-
+export const {
+  useMyChatsQuery,
+  useLazySearchUserQuery,
+  useSendFriendRequestMutation,
+  useGetNotificationsQuery,
+  useAcceptFriendRequestMutation,
+  useChatDetailsQuery,
+  useGetMessagesQuery,
+  useSendAttachmentsMutation,
+  useMyGroupsQuery,
+  useAvailableFriendsQuery,
+  useNewGroupMutation,
+  useRenameGroupMutation,
+  useRemoveGroupMembersMutation,
+  useAddGroupMembersMutation,
+  useDeleteChatMutation,
+} = api;

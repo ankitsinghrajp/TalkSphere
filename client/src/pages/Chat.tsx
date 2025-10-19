@@ -7,7 +7,7 @@ import MessageComponent from '../components/shared/MessageComponent'
 import { useSocket } from '../socket'
 import { ALERT, NEW_MESSAGE, START_TYPING, STOP_TYPING } from '../components/constants/events'
 import { useChatDetailsQuery, useGetMessagesQuery } from '../redux/api/api'
-import { CircleLoader, SyncLoader } from 'react-spinners'
+import { CircleLoader } from 'react-spinners'
 import { useErrors, useSocketEvents } from '../hooks/hook'
 import { useTopInfiniteScroll } from '../hooks/useTopInfiniteScroll'
 import { useDispatch } from 'react-redux'
@@ -49,6 +49,7 @@ const Chat = ({chatId}) => {
   ]
   
   useErrors(errors);
+
 
   // Clear all the chat data when chatId switched
   useEffect(() => {

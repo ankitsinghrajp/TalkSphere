@@ -10,13 +10,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from 'sonner'
 import AddMemberDialog from '../components/dialog/addMemberDialog'
 import UserItem from '../components/shared/UserItem'
-import { useChatDetailsQuery, useMyGroupsQuery, useRenameGroupMutation } from '../redux/api/api'
+import { useAddGroupMembersMutation, useChatDetailsQuery, useDeleteChatMutation, useMyGroupsQuery, useRemoveGroupMembersMutation, useRenameGroupMutation } from '../redux/api/api'
 import { useAsyncMutation, useErrors } from '../hooks/hook'
 import { MoonLoader } from 'react-spinners'
+import { useDispatch, useSelector } from 'react-redux'
+import { setIsAddMember } from '../redux/reducers/misc'
 
 const Groups = () => {
   const chatId = useSearchParams()[0].get("group");
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
 
   const myGroups = useMyGroupsQuery("");
 
@@ -26,7 +30,9 @@ const Groups = () => {
   );
 
   const [updateGroup, isLoadingGroupName] = useAsyncMutation(useRenameGroupMutation);
-
+  const [removeMember, isLoadingRemoveMember] = useAsyncMutation(useRemoveGroupMembersMutation);
+  const [deleteGroup, isLoadingDeleteGroup] = useAsyncMutation(useDeleteChatMutation);
+ 
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isEdit, setIsEdit] = useState(false);
@@ -34,7 +40,8 @@ const Groups = () => {
   const [groupNameUpdatedValue, setGroupNameUpdatedValue] = useState("");
   const [confirmDeleteDialog, setConfirmDeleteDialog] = useState(false);
   const [members, setMembers] = useState([]);
-
+   
+  const {isAddMember} = useSelector((state)=>state.misc);
   const errors = [{
     isError: myGroups.isError,
     error: myGroups.error,
@@ -93,19 +100,20 @@ const Groups = () => {
 
   const openAddMemberHandler = ()=>{
     
+       dispatch(setIsAddMember(true));
 
   }
 
-  const isAddMember = false;
 
   const deleteHandler = ()=>{
-      console.log("Deleted Successfully");
-      toast.success("The Group Deleted Successfully!");
+      
+       deleteGroup("Deleting Group...",{chatId});
       closeConfirmDeleteHandler();
+      navigate("/groups");
   }
 
   const removeMemberHandler = (id)=>{
-       console.log("Remove member",id);
+       removeMember("Removing member...",{userId:id,chatId})
   }
 
   return (
@@ -246,6 +254,7 @@ const Groups = () => {
                       onClick={openConfirmDeleteHandler} 
                       variant="destructive" 
                       className='w-full sm:w-auto flex items-center justify-center gap-2 shadow-sm hover:shadow-md transition-all'
+                      disabled={isLoadingDeleteGroup}
                     >
                       <Trash className='h-4 w-4'/>
                       Delete Group
@@ -268,7 +277,7 @@ const Groups = () => {
       </div>
     </div>
 
-    {isAddMember && <AddMemberDialog/>}
+    {isAddMember && <AddMemberDialog chatId={chatId}/>}
 
     {/* Confirm Delete Dialog */}
     <Dialog open={confirmDeleteDialog} onOpenChange={setConfirmDeleteDialog}>

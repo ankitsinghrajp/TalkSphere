@@ -1,7 +1,7 @@
 import React, { lazy, memo, useCallback, useEffect, useMemo, type ComponentType, type ReactNode } from "react";
 import Header from "./Header";
 import Title from "../shared/Title";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Profile from "../specific/profile";
 import { useMyChatsQuery } from "../../redux/api/api";
 import { MoonLoader } from "react-spinners";
@@ -15,7 +15,7 @@ import {
 import { setIsMobileMenu } from "../../redux/reducers/misc";
 import { useErrors, useSocketEvents } from "../../hooks/hook";
 import { useSocket } from "../../socket";
-import { NEW_MESSAGE_ALERT, NEW_REQUEST } from "../constants/events";
+import { NEW_MESSAGE_ALERT, NEW_REQUEST, REFETCH_CHATS } from "../constants/events";
 import { incrementNotification, setNewMessagesAlert } from "../../redux/reducers/chat";
 import { getOrSaveFromStorage } from "../../lib/feature";
 
@@ -83,8 +83,10 @@ const AppLayout = (layoutProps: AppLayoutProps = {}) => <P extends object>(Wrapp
     const {newMessageAlert} = useSelector((state)=> state.chat);
     const params = useParams();
     const chatId = params.chatId;
-    const { isLoading, data, isError, error } = useMyChatsQuery("");
+    const { isLoading, data, isError, error, refetch } = useMyChatsQuery("");
    const socket = useSocket();
+
+   const navigate = useNavigate();
     
 
     useErrors([{isError,error}]);
@@ -148,9 +150,15 @@ const AppLayout = (layoutProps: AppLayoutProps = {}) => <P extends object>(Wrapp
         dispatch(incrementNotification());    
       },[dispatch]);
 
+      const refetchHandler = useCallback(()=>{ 
+           refetch();
+           navigate("/");
+      },[refetch, navigate]);
+
       const eventHandlers = {
         [NEW_MESSAGE_ALERT]: newMessagesAlertHandler,
         [NEW_REQUEST]:newRequestHandler,
+        [REFETCH_CHATS]:refetchHandler,
       };
      
       useSocketEvents(socket, eventHandlers);

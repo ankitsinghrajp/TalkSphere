@@ -227,15 +227,7 @@ const Login = () => {
                     )}
                 </div>
 
-                {/* Forgot Password */}
-                <div className="text-right animate-fadeIn">
-                  <button
-                    type="button"
-                    className="text-sm text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors duration-200 hover:underline"
-                  >
-                    Forgot Password?
-                  </button>
-                </div>
+           
 
                 {/* Submit Button */}
                 <Button 
